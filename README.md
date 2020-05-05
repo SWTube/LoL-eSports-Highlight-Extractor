@@ -9,16 +9,17 @@ Based on conda environment
 
 # Organization
 ## Visual Recognition
-* [Alegruz](https://github.com/Alegruz)
+* [Alegruz](https://github.com/Alegruz) Leader
 * [littlecsi](https://github.com/littlecsi)
 * [SW0000J](https://github.com/SW0000J)
 
 ## Audio Recognition
+* [AmorAmare](https://github.com/AmorAmare) Leader
 * [J2onJaeHyeon](https://github.com/J2onJaeHyeon)
 * [eu2525](https://github.com/eu2525)
 
 ## Chat Analysis
-* [ch4n3-yoon](https://github.com/ch4n3-yoon)
+* [ch4n3-yoon](https://github.com/ch4n3-yoon) Leader
 
 ## Standardization Team
 * [hojun313](https://github.com/hojun313)
