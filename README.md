@@ -1,6 +1,12 @@
 # LoL-eSports-Highlight-Extractor
 This program will have a full match video of an LoL game, especially the ones based in LCK. The program will analyze the match via CNN, and extract the highlight clips of the game.
 
+# Framework
+Based on conda environment
+* Python 3.7.7
+* Pytorch 1.5.0 (`conda install pytorch torchvision cudatoolkit=10.2 -c pytorch`)
+* Pillow 7.1.2
+
 # Organization
 ## Visual Recognition
 * [Alegruz](https://github.com/Alegruz)
