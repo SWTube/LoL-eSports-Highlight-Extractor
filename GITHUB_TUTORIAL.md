@@ -1,3 +1,33 @@
+# Summary
+## Git Branch
+master < release < develop < feature<br>
+hotfix
+### Naming Convention
+`feature-text-recognition`
+
+### When to Push to `develop`?
+When `feature` is complete, then report to PM, then push/merge the branch.<br>
+Other members should then pull `develop` and update their individual `feature` branches
+
+## Commit Message
+* categories
+    * [add] -> added new features
+    * [fix] -> fixed errors such as syntax errors
+    * [new] -> created new file
+    * [remove] -> removed file
+    * [rollback] -> removed changes
+```
+[category] - [simple message]
+
+[detailed description]
+why committed?
+what was the bug issue?
+include url to the issue tracker if there is one
+``` 
+
+## Coding Review
+Weekly. Done via GitHub.
+
 # Git
 ## Installation
 https://git-scm.com/
