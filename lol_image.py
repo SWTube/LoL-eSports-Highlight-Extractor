@@ -28,7 +28,6 @@ def image_to_data(path: str) -> np.ndarray:
 def main():
     # Print Pillow Version
     print('Pillow Version:', PIL.__version__)
-    print(image_to_data('resources/preview.jpeg'))
 
 
 if __name__ == '__main__':
