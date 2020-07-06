@@ -6,6 +6,7 @@ Based on conda environment
 * Python 3.7.7
 * Pytorch 1.5.0 (`conda install pytorch torchvision cudatoolkit=10.2 -c pytorch`)
 * Pillow 7.1.2
+* OpenCV 3.4.2
 
 # Organization
 ## Visual Recognition
