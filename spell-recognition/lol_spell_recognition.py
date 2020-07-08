@@ -1,7 +1,7 @@
 """
 This file will analyse the summoner spells availability.
 """
-from lol_image import image_to_data
+import cv2
 
 """
 All spells are assumed to be 20x20 pixels
