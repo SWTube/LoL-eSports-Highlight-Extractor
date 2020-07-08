@@ -63,8 +63,6 @@ def resize_image(img: np.ndarray, width: int, height: int) -> np.ndarray:
     assert isinstance(height, int)
 
 
-
-
 def video_to_list(path: str) -> list:
     """
     Converts a video file to frames and returns a list of them.
@@ -80,12 +78,12 @@ def video_to_list(path: str) -> list:
         N/A
     """
     frame_list = []
-    vid = cv2.VideoCapture(path)
+    vid = cv.VideoCapture(path)
 
-    while(vid.isOpened()):
+    while vid.isOpened():
         ret, frame = vid.read()
 
-        if ret == False:
+        if not ret:
             break
         frame_list.append(frame)
 
@@ -97,7 +95,6 @@ def video_to_list(path: str) -> list:
 
 def main():
     frames = []
-
 
 
 if __name__ == '__main__':
