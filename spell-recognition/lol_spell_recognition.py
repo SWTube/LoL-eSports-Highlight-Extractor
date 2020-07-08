@@ -95,6 +95,23 @@ def video_to_list(path: str) -> list:
 
 def main():
     frames = []
+    spell_image_data = []
+    spell_file = ["Barrier.png", "Challenging_Smite.png", "Chilling_Smite.png", "Clarity.png", "Cleanse.png",
+                  "Exhaust.png", "Flash.png", "Ghost.png", "Heal.png",
+                  "Hexflash.png", "Ignite.png", "Smite.png", "Teleport.png"]
+
+    video_path = ""
+    spell_path = "../resources/summoner_spells/"
+
+    ## Initialise
+    for i in range(len(spell_file)):
+        print(i)
+        spell_image = cv.imread(spell_path + spell_file[i])
+        spell_image_data.append(spell_image)
+        print(spell_image_data[i])
+
+    # Converts video to list of frames and saves them in *frames* list variable.
+    # frames = video_to_list(video_path)
 
 
 if __name__ == '__main__':
