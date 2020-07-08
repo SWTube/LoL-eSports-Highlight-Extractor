@@ -62,9 +62,42 @@ def resize_image(img: np.ndarray, width: int, height: int) -> np.ndarray:
     assert isinstance(width, int)
     assert isinstance(height, int)
 
+    
+
+
+def video_to_list(path: str) -> list:
+    """
+    Converts a video file to frames and returns a list of them.
+
+    Args:
+        path: String value of path to video file.
+
+    Returns:
+        If correct path is given, this function will convert the video file to a list of frames.
+        If given path is wrong, returns an empty list.
+
+    Raises:
+        N/A
+    """
+    frame_list = []
+    vid = cv2.VideoCapture('')
+
+    while(vid.isOpened()):
+        ret, frame = vid.read()
+
+        if ret == False:
+            break
+        frame_list.append(frame)
+
+    vid.release()
+    # vid.destroyAllWindows()
+
+    return frame_list
+
 
 def main():
     frames = []
+
 
 
 if __name__ == '__main__':
