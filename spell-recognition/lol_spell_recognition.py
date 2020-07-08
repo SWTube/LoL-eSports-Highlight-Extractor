@@ -1,7 +1,8 @@
 """
 This file will analyse the summoner spells availability.
 """
-import cv2
+import cv2 as cv
+import numpy as np
 
 """
 All spells are assumed to be 20x20 pixels
@@ -40,9 +41,30 @@ No5 Summoner F Spells Coordinates [593, 1894] -> [612, 1913]
 """
 
 
+def resize_image(img: np.ndarray, width: int, height: int) -> np.ndarray:
+    """
+    Resizes the image to a size given in the parameters.
+
+    Args:
+        img: Numpy array data of an image to be resized.
+        width: Target width value of the converted data.
+        height: Target height value of the converted data.
+
+    Returns:
+        If correct path is given, returns the numpy ndarray of the resized image.
+        If given path is wrong, returns an empty numpy ndarray.
+
+    Raises:
+        AssertionError: An error occured from reading parameters. Incorrect type of data given as parameters.
+    """
+    # Check if data types of arguments are correct.
+    assert isinstance(img, np.ndarray)
+    assert isinstance(width, int)
+    assert isinstance(height, int)
+
+
 def main():
-    data = image_to_data('resources/preview.jpeg')
-    print(data[165][10])
+    frames = []
 
 
 if __name__ == '__main__':
