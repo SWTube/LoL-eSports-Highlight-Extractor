@@ -62,7 +62,7 @@ def resize_image(img: np.ndarray, width: int, height: int) -> np.ndarray:
     assert isinstance(width, int)
     assert isinstance(height, int)
 
-    
+
 
 
 def video_to_list(path: str) -> list:
@@ -80,7 +80,7 @@ def video_to_list(path: str) -> list:
         N/A
     """
     frame_list = []
-    vid = cv2.VideoCapture('')
+    vid = cv2.VideoCapture(path)
 
     while(vid.isOpened()):
         ret, frame = vid.read()
