@@ -7,6 +7,8 @@ Based on conda environment
 * Pytorch 1.5.0 (`conda install pytorch torchvision cudatoolkit=10.2 -c pytorch`)
 * Pillow 7.1.2
 * OpenCV 3.4.2
+* numpy 1.18.1
+* matplotlib 3.1.3
 
 # Organization
 ## Visual Recognition
@@ -18,6 +20,7 @@ Based on conda environment
 * [SW0000J](https://github.com/SW0000J)
 * [luckydipper](https://github.com/luckydipper)
 * [bluehyena](https://github.com/bluehyena)
+* [kkim99](https://github.com/kkim99)
 
 ## Audio Recognition
 * **[AmorAmare](https://github.com/AmorAmare) Leader**
