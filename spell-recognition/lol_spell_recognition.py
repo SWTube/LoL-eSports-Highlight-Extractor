@@ -3,6 +3,9 @@ This file will analyse the summoner spells availability.
 """
 import cv2 as cv
 import numpy as np
+import warnings
+import time
+from matplotlib import pyplot as plt
 
 """
 All spells are assumed to be 20x20 pixels
@@ -39,28 +42,6 @@ No4 Summoner F Spells Coordinates [489, 1894] -> [508, 1913]
 No5 Summoner D Spells Coordinates [570, 1894] -> [589, 1913]
 No5 Summoner F Spells Coordinates [593, 1894] -> [612, 1913]
 """
-
-
-def resize_image(img: np.ndarray, width: int, height: int) -> np.ndarray:
-    """
-    Resizes the image to a size given in the parameters.
-
-    Args:
-        img: Numpy array data of an image to be resized.
-        width: Target width value of the converted data.
-        height: Target height value of the converted data.
-
-    Returns:
-        If correct path is given, returns the numpy ndarray of the resized image.
-        If given path is wrong, returns an empty numpy ndarray.
-
-    Raises:
-        AssertionError: An error occured from reading parameters. Incorrect type of data given as parameters.
-    """
-    # Check if data types of arguments are correct.
-    assert isinstance(img, np.ndarray)
-    assert isinstance(width, int)
-    assert isinstance(height, int)
 
 
 def video_to_list(path: str) -> list:
@@ -100,16 +81,18 @@ def main():
                   "Exhaust.png", "Flash.png", "Ghost.png", "Heal.png",
                   "Hexflash.png", "Ignite.png", "Smite.png", "Teleport.png"]
 
-    video_path = ""
+    video_path = "../resources/FULL_LCKSpring2020_GRFvsDWG_W8D1_G2.mp4"
     spell_path = "../resources/summoner_spells/"
-
     ## Initialise
+    # Load spell images
     for i in range(len(spell_file)):
-        print(i)
         spell_image = cv.imread(spell_path + spell_file[i])
         spell_image_data.append(spell_image)
-        print(spell_image_data[i])
-
+        # OpenCV uses BGR as its default color order for images, so convert to RGB
+        spell_image_data[i] = cv.cvtColor(spell_image_data[i], cv.COLOR_BGR2RGB)
+    # Resize all spell images to 20x20
+    for i in range(len(spell_image_data)):
+        spell_image_data[i] = cv.resize(spell_image_data[i], (20, 20))
     # Converts video to list of frames and saves them in *frames* list variable.
     # frames = video_to_list(video_path)
 
