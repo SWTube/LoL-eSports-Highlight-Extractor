@@ -1,5 +1,12 @@
 """
-This file will analyse the summoner spells availability.
+#   File Name: lol_spell_recognition.py
+#        Team: visual recognition 2
+#  Programmer: littlecsi
+               bluehyena
+#  Start Date: 06/05/20
+# Last Update: July 10, 2020
+#     Purpose: This file specifically tries to recognize the cooltime of summoner spells
+               and uses this data to calculate highlight score of the game.
 """
 import cv2 as cv
 import numpy as np
@@ -56,7 +63,7 @@ def video_to_list(path: str) -> list:
         If given path is wrong, returns an empty list.
 
     Raises:
-        N/A
+        None
     """
     frame_list = []
     vid = cv.VideoCapture(path)
@@ -74,9 +81,103 @@ def video_to_list(path: str) -> list:
     return frame_list
 
 
+def mse(imgA: np.ndarray, imgB: np.ndarray) -> float:
+    """
+    Calculates the 'Mean Squared Error' between the two images,
+    which is the sum of the squared difference between the two images;
+    CAUTION! the two images must have the same dimension.
+
+    Args:
+        imgA: Image to compare.
+        imgB: Original image
+
+    Returns:
+        MSE. Lower the error, the more "similar" the two images are.
+
+    Raises:
+        None
+    """
+    error = np.sum((imgA.astype("float") - imgB.astype("float")) ** 2)
+    error /= float(imgA.shape[0] * imgA.shape[1])
+
+    return error
+
+
+# LAC
+def compare_images_1(imgA: np.ndarray, imgB: np.ndarray) -> float:
+    """
+    Calculates the similarity of the two images.
+
+    Args:
+        imgA: Image to compare.
+        imgB: Original image
+
+    Returns:
+        "Similarity" percentage of the two images.
+
+    Raises:
+        None
+    """
+    return None
+
+
+# LJH
+def compare_images_2(imgA: np.ndarray, imgB: np.ndarray) -> float:
+    """
+    Compare two images through histogram
+
+    Args:
+        imgA: image in video
+        imgB: original image
+
+    Returns:
+        Similarity between two images
+
+    Raises:
+        None
+    """
+    #Convert to hsv
+    hsv_a = cv.cvtColor(imgA, cv.COLOR_BGR2HSV)
+    hsv_b = cv.cvtColor(imgB, cv.COLOR_BGR2HSV)
+
+    # Calculate and Normalize histogram
+    hist_a = cv.calcHist([hsv_a], [0], None, [256], [0, 256])
+    cv.normalize(hist_a, hist_a, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
+    hist_b = cv.calcHist([hsv_b], [0], None, [256], [0, 256])
+    cv.normalize(hist_b, hist_b, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
+
+    # Compare hist_a, hist_b
+    a_b_comparison = cv.compareHist(hist_a, hist_b, 0)
+
+    return a_b_comparison
+
+
+def extract_spell_images(frame: np.ndarray) -> list:
+    """
+    Extracts summoners' spell images from the in-game image given as a parameter.
+
+    Args:
+        frame: A single frame from the game video.
+
+    Returns:
+        list of summoners' spell images.
+
+    Raises:
+        None
+    """
+    in_game_spell = [[[], [], [], [], []], [[], [], [], [], []]]
+
+    for y in range(158, 178):
+        for x in range(5, 25):
+
+
+    return None
+
+
 def main():
     frames = []
     spell_image_data = []
+    in_game_spell = []
     spell_file = ["Barrier.png", "Challenging_Smite.png", "Chilling_Smite.png", "Clarity.png", "Cleanse.png",
                   "Exhaust.png", "Flash.png", "Ghost.png", "Heal.png",
                   "Hexflash.png", "Ignite.png", "Smite.png", "Teleport.png"]
@@ -96,6 +197,9 @@ def main():
     # Converts video to list of frames and saves them in *frames* list variable.
     # frames = video_to_list(video_path)
 
+
+    ####
+    print(compare_images_2(spell_image_data[0], spell_image_data[0]))
 
 if __name__ == '__main__':
     main()
