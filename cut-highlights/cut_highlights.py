@@ -2,13 +2,14 @@
 #        Team: standardization
 #  Programmer: ssw03270
 #  Start Date: 07/08/20
-# Last Update: July 09, 2020
+# Last Update: July 10, 2020
 #     Purpose: Almost highlight video has 3 game.
 #              So we have to cut it to compare with our highlights.
 #              This program help to do it.
 
 
-#1620, 780 (1920, 1080) : minimap start point in edit video, raw video size
+# 1620, 780 (1920, 1080) : minimap start point in edit video, raw video size
+# If you want to see visual working process, erase #(notes) under the code.
 
 import cv2 as cv
 import numpy as np
@@ -42,16 +43,16 @@ def matching(video_capture: np.ndarray, video_path: str, compare_image: np.ndarr
 
         frame_resize = frame[width_start: width_end, height_start: height_end]
 
-        #Showing video.
-        cv.imshow("VideoFrame", frame)
+        # Showing video.
+        # cv.imshow("VideoFrame", frame)
 
         if video_capture.get(cv.CAP_PROP_POS_FRAMES) % 30 == 0:
             print("start comparing..." + str(video_capture.get(cv.CAP_PROP_POS_FRAMES)))
             checker.append([video_capture.get(cv.CAP_PROP_POS_FRAMES), sift_algorithm(frame_resize, compare_image)])
 
         # Stopping video.
-        if cv.waitKey(1) > 0:
-            break
+        # if cv.waitKey(1) > 0:
+        #     break
 
     write_txt(checker)
     video_capture.release()
@@ -85,10 +86,10 @@ def sift_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> int:
         if m.distance < 0.75 * n.distance:
             good.append([m])
 
-    #Showing plt.
-    plt_image = cv.drawMatchesKnn(frame_resize, keypoint_1, compare_image, keypoint_2, good, None, flags=2)
-    plt.imshow(plt_image)
-    plt.show()
+    # Showing plt.
+    # plt_image = cv.drawMatchesKnn(frame_resize, keypoint_1, compare_image, keypoint_2, good, None, flags=2)
+    # plt.imshow(plt_image)
+    # plt.show()
 
 
     if len(good) > 30:
