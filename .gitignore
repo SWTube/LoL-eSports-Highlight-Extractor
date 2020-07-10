@@ -7,3 +7,4 @@
 .idea/vcs.xml
 .idea/workspace.xml
 __pycache__/lol_image.cpython-37.pyc
+*.xml
