@@ -10,8 +10,6 @@
 """
 import cv2 as cv
 import numpy as np
-import warnings
-import time
 from matplotlib import pyplot as plt
 
 """
@@ -65,6 +63,9 @@ def video_to_list(path: str) -> list:
     Raises:
         None
     """
+    assert isinstance(path, str)
+
+    print("video_to_list() function called.")
     frame_list = []
     vid = cv.VideoCapture(path)
 
@@ -97,6 +98,9 @@ def mse(imgA: np.ndarray, imgB: np.ndarray) -> float:
     Raises:
         None
     """
+    assert isinstance(imgA, np.ndarray)
+    assert isinstance(imgB, np.ndarray)
+
     error = np.sum((imgA.astype("float") - imgB.astype("float")) ** 2)
     error /= float(imgA.shape[0] * imgA.shape[1])
 
@@ -118,6 +122,9 @@ def compare_images_1(imgA: np.ndarray, imgB: np.ndarray) -> float:
     Raises:
         None
     """
+    assert isinstance(imgA, np.ndarray)
+    assert isinstance(imgB, np.ndarray)
+
     return None
 
 
@@ -136,7 +143,9 @@ def compare_images_2(imgA: np.ndarray, imgB: np.ndarray) -> float:
     Raises:
         None
     """
-    #Convert to hsv
+    assert isinstance(imgA, np.ndarray)
+    assert isinstance(imgB, np.ndarray)
+    # Convert to hsv
     hsv_a = cv.cvtColor(imgA, cv.COLOR_BGR2HSV)
     hsv_b = cv.cvtColor(imgB, cv.COLOR_BGR2HSV)
 
@@ -160,18 +169,39 @@ def extract_spell_images(frame: np.ndarray) -> list:
         frame: A single frame from the game video.
 
     Returns:
-        list of summoners' spell images.
+        list of summoners' spell images. This list will contain
+
+        [
+            ["Summoner 1 D"], ["Summoner 1 F"], ["Summoner 2 D"], ["Summoner 2 F"], ...
+        ]
 
     Raises:
         None
     """
-    in_game_spell = [[[], [], [], [], []], [[], [], [], [], []]]
+    assert isinstance(frame, np.ndarray)
 
-    for y in range(158, 178):
-        for x in range(5, 25):
+    in_game_spell = [[], [], [], [], [], [], [], [], [], [],
+                     [], [], [], [], [], [], [], [], [], []]
+    position = [
+        [158, 5, 177, 24], [181, 5, 200, 24],
+        [261, 5, 280, 24], [284, 5, 303, 24],
+        [364, 5, 383, 24], [387, 5, 406, 24],
+        [466, 5, 485, 24], [489, 5, 508, 24],
+        [570, 5, 589, 24], [593, 5, 612, 24],
+        [158, 1894, 177, 1913], [181, 1894, 200, 1913],
+        [261, 1894, 280, 1913], [284, 1894, 303, 1913],
+        [364, 1894, 383, 1913], [387, 1894, 406, 1913],
+        [466, 1894, 485, 1913], [489, 1894, 508, 1913],
+        [570, 1894, 589, 1913], [593, 1894, 612, 1913]
+    ]
 
+    for i in range(20):
+        for y in range(position[i][0], position[i][2] + 1):
+            in_game_spell[i].append([])
+            for x in range(position[i][1], position[i][3] + 1):
+                in_game_spell[i][y - position[i][0]].append(frame[y][x])
 
-    return None
+    return in_game_spell
 
 
 def main():
@@ -182,7 +212,7 @@ def main():
                   "Exhaust.png", "Flash.png", "Ghost.png", "Heal.png",
                   "Hexflash.png", "Ignite.png", "Smite.png", "Teleport.png"]
 
-    video_path = "../resources/FULL_LCKSpring2020_GRFvsDWG_W8D1_G2.mp4"
+    video_path = "../resources/test.mp4"
     spell_path = "../resources/summoner_spells/"
     ## Initialise
     # Load spell images
@@ -194,12 +224,18 @@ def main():
     # Resize all spell images to 20x20
     for i in range(len(spell_image_data)):
         spell_image_data[i] = cv.resize(spell_image_data[i], (20, 20))
-    # Converts video to list of frames and saves them in *frames* list variable.
-    # frames = video_to_list(video_path)
+    # Convert video to list of frames and saves them in *frames* list variable.
+    frames = video_to_list(video_path)
 
+    # -- test -- #
 
-    ####
-    print(compare_images_2(spell_image_data[0], spell_image_data[0]))
+    in_game_spell = extract_spell_images(frames[0])
+
+    # ## Begin frame analysis
+    # for frame in range(len(frames)):
+    #     # Extract spell images from the frame.
+    #     in_game_spell = extract_spell_images(frame)
+
 
 if __name__ == '__main__':
     main()
