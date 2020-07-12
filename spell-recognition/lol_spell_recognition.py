@@ -65,7 +65,6 @@ def video_to_list(path: str) -> list:
     """
     assert isinstance(path, str)
 
-    print("video_to_list() function called.")
     frame_list = []
     vid = cv.VideoCapture(path)
 
@@ -74,6 +73,8 @@ def video_to_list(path: str) -> list:
 
         if not ret:
             break
+
+        frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
         frame_list.append(frame)
 
     vid.release()
@@ -180,8 +181,7 @@ def extract_spell_images(frame: np.ndarray) -> list:
     """
     assert isinstance(frame, np.ndarray)
 
-    in_game_spell = [[], [], [], [], [], [], [], [], [], [],
-                     [], [], [], [], [], [], [], [], [], []]
+    in_game_spell = []
     position = [
         [158, 5, 177, 24], [181, 5, 200, 24],
         [261, 5, 280, 24], [284, 5, 303, 24],
@@ -196,10 +196,13 @@ def extract_spell_images(frame: np.ndarray) -> list:
     ]
 
     for i in range(20):
+        in_game_spell.append([])
         for y in range(position[i][0], position[i][2] + 1):
             in_game_spell[i].append([])
             for x in range(position[i][1], position[i][3] + 1):
                 in_game_spell[i][y - position[i][0]].append(frame[y][x])
+                # in_game_spell[i] = np.append(in_game_spell, frame[y][x], axis=0)
+        in_game_spell[i] = np.array(in_game_spell[i], dtype="uint8")
 
     return in_game_spell
 
@@ -214,7 +217,7 @@ def main():
 
     video_path = "../resources/test.mp4"
     spell_path = "../resources/summoner_spells/"
-    ## Initialise
+    ## Initialize
     # Load spell images
     for i in range(len(spell_file)):
         spell_image = cv.imread(spell_path + spell_file[i])
@@ -226,15 +229,18 @@ def main():
         spell_image_data[i] = cv.resize(spell_image_data[i], (20, 20))
     # Convert video to list of frames and saves them in *frames* list variable.
     frames = video_to_list(video_path)
+    # ## Begin frame analysis
+    # for frame in range(len(frames)):
+    #     # Extract spell images from the frame.
+    #     in_game_spell = extract_spell_images(frame)
 
     # -- test -- #
 
     in_game_spell = extract_spell_images(frames[0])
 
-    # ## Begin frame analysis
-    # for frame in range(len(frames)):
-    #     # Extract spell images from the frame.
-    #     in_game_spell = extract_spell_images(frame)
+    for i in range(len(in_game_spell)):
+        plt.imshow(in_game_spell[i])
+        plt.show()
 
 
 if __name__ == '__main__':
