@@ -3,6 +3,7 @@
 #        Team: visual recognition 2
 #  Programmer: littlecsi
                bluehyena
+               kkim99
 #  Start Date: 06/05/20
 # Last Update: July 10, 2020
 #     Purpose: This file specifically tries to recognize the cooltime of summoner spells
