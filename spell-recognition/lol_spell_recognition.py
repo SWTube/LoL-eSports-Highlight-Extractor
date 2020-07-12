@@ -264,7 +264,7 @@ def main():
     # Convert video to list of frames and saves them in *frames* list variable.
     frames = video_to_list(video_path)
     ## Begin frame analysis
-    # for frame in range(len(frames)):
+    # for frame in frames:
     #     # Extract spell images from the frame.
     #     in_game_spell = extract_spell_images(frame)
 
