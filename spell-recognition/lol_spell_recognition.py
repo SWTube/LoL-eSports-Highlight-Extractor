@@ -11,6 +11,7 @@
 import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
+from skimage import metrics
 
 """
 All spells are assumed to be 20x20 pixels
@@ -125,8 +126,25 @@ def compare_images_1(imgA: np.ndarray, imgB: np.ndarray) -> float:
     """
     assert isinstance(imgA, np.ndarray)
     assert isinstance(imgB, np.ndarray)
+    # compute the mean squared error
+    m = mse(imgA, imgB)
+    # compute the structural similarity
+    s = metrics.structural_similarity(imgA, imgB, multichannel=True)
+    # setup the figure
+    fig = plt.figure("Image Comparison")
+    plt.suptitle("MSE: %.2f, SSIM: %.2f" % (m, s))
+    # show first image
+    ax = fig.add_subplot(1, 2, 1)
+    plt.imshow(imgA, cmap=plt.cm.gray)
+    plt.axis("off")
+    # show the second image
+    ax = fig.add_subplot(1, 2, 2)
+    plt.imshow(imgB, cmap=plt.cm.gray)
+    plt.axis("off")
+    # show the images
+    plt.show()
 
-    return None
+    return s
 
 
 # LJH
@@ -236,11 +254,16 @@ def main():
 
     # -- test -- #
 
+    # idx = 2, 12
+    # images in those indexes are on cooldown.
+
     in_game_spell = extract_spell_images(frames[0])
 
-    for i in range(len(in_game_spell)):
-        plt.imshow(in_game_spell[i])
-        plt.show()
+    compare_images_1(in_game_spell[2], spell_image_data[1])
+    compare_images_1(in_game_spell[12], spell_image_data[1])
+
+    print(compare_images_2(in_game_spell[2], spell_image_data[1]))
+    print(compare_images_2(in_game_spell[12], spell_image_data[1]))
 
 
 if __name__ == '__main__':
