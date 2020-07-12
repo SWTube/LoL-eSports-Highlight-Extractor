@@ -181,24 +181,27 @@ def compare_images_2(imgA: np.ndarray, imgB: np.ndarray) -> float:
     return a_b_comparison
 
 
-def extract_spell_images(frame: np.ndarray) -> list:
+def extract_spell_images(frame: np.ndarray, loc: int = 0) -> list:
     """
     Extracts summoners' spell images from the in-game image given as a parameter.
 
     Args:
         frame: A single frame from the game video.
+        loc: An integer between 1~20 representing one specific location of the spell.
+             If nothing is parsed, function returns all spells in the given frame.
+             1 - Left Summoner 1 D, 2 - Left SUmmoner 1 F, ... , 20 - Right Summoner 5 - F
 
     Returns:
-        list of summoners' spell images. This list will contain
-
-        [
-            ["Summoner 1 D"], ["Summoner 1 F"], ["Summoner 2 D"], ["Summoner 2 F"], ...
-        ]
+        list of summoners' spell image(s). This list will look like:
+        [["Summoner 1 D"], ["Summoner 1 F"], ["Summoner 2 D"], ["Summoner 2 F"], ...]
+            or
+        ["Summoner 4 F"]
 
     Raises:
         None
     """
     assert isinstance(frame, np.ndarray)
+    assert isinstance(loc, int)
 
     in_game_spell = []
     position = [
@@ -214,16 +217,28 @@ def extract_spell_images(frame: np.ndarray) -> list:
         [570, 1894, 589, 1913], [593, 1894, 612, 1913]
     ]
 
-    for i in range(20):
-        in_game_spell.append([])
-        for y in range(position[i][0], position[i][2] + 1):
-            in_game_spell[i].append([])
-            for x in range(position[i][1], position[i][3] + 1):
-                in_game_spell[i][y - position[i][0]].append(frame[y][x])
-                # in_game_spell[i] = np.append(in_game_spell, frame[y][x], axis=0)
-        in_game_spell[i] = np.array(in_game_spell[i], dtype="uint8")
+    if (loc != 0) and (loc > 0) and loc <= 20:
+        loc -= 1
+        for y in range(position[loc][0], position[loc][2] + 1):
+            in_game_spell.append([])
+            for x in range(position[loc][1], position[loc][3] + 1):
+                in_game_spell[y - position[loc][0]].append(frame[y][x])
+        in_game_spell = np.array(in_game_spell, dtype="uint8")
 
-    return in_game_spell
+        return in_game_spell
+    elif loc == 0:
+        for i in range(20):
+            in_game_spell.append([])
+            for y in range(position[i][0], position[i][2] + 1):
+                in_game_spell[i].append([])
+                for x in range(position[i][1], position[i][3] + 1):
+                    in_game_spell[i][y - position[i][0]].append(frame[y][x])
+                    # in_game_spell[i] = np.append(in_game_spell, frame[y][x], axis=0)
+            in_game_spell[i] = np.array(in_game_spell[i], dtype="uint8")
+
+        return in_game_spell
+    else:
+        assert False
 
 
 def main():
@@ -248,7 +263,7 @@ def main():
         spell_image_data[i] = cv.resize(spell_image_data[i], (20, 20))
     # Convert video to list of frames and saves them in *frames* list variable.
     frames = video_to_list(video_path)
-    # ## Begin frame analysis
+    ## Begin frame analysis
     # for frame in range(len(frames)):
     #     # Extract spell images from the frame.
     #     in_game_spell = extract_spell_images(frame)
