@@ -31,14 +31,14 @@ radius : 12
 
 def draw_circle_on_ultimate(circle_x : int, circle_y : int) -> None:
     """
-    Draw circle on ultimate to get ultimate skill's coordinate
+    Draw circle on ultimate skill to get ultimate skill's coordinate
 
     Args:
         circle_x: x-coordinate of the center of the circle
         circle_y: y-coordinate of the center of the circle
 
     Returns:
-        Just
+        Just draw circle on ultimate skill
 
     Raises:
         None
