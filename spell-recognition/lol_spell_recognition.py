@@ -85,7 +85,7 @@ def video_to_list(path: str) -> list:
     return frame_list
 
 
-def mse(imgA: np.ndarray, imgB: np.ndarray) -> float:
+def mean_squared_error(imgA: np.ndarray, imgB: np.ndarray) -> float:
     """
     Calculates the 'Mean Squared Error' between the two images,
     which is the sum of the squared difference between the two images;
@@ -127,25 +127,31 @@ def compare_images_1(imgA: np.ndarray, imgB: np.ndarray) -> float:
     """
     assert isinstance(imgA, np.ndarray)
     assert isinstance(imgB, np.ndarray)
+
     # compute the mean squared error
-    m = mse(imgA, imgB)
+    mse_value = mean_squared_error(imgA, imgB)
+
     # compute the structural similarity
-    s = metrics.structural_similarity(imgA, imgB, multichannel=True)
+    ssim_value = metrics.structural_similarity(imgA, imgB, multichannel=True)
+
     # setup the figure
     fig = plt.figure("Image Comparison")
-    plt.suptitle("MSE: %.2f, SSIM: %.2f" % (m, s))
+    plt.suptitle("MSE: %.2f, SSIM: %.2f" % (mse_value, ssim_value))
+
     # show first image
-    ax = fig.add_subplot(1, 2, 1)
+    axis_img_a = fig.add_subplot(1, 2, 1)
     plt.imshow(imgA, cmap=plt.cm.gray)
     plt.axis("off")
+
     # show the second image
-    ax = fig.add_subplot(1, 2, 2)
+    axis_img_b = fig.add_subplot(1, 2, 2)
     plt.imshow(imgB, cmap=plt.cm.gray)
     plt.axis("off")
+
     # show the images
     plt.show()
 
-    return s
+    return ssim_value
 
 
 # LJH
@@ -165,6 +171,7 @@ def compare_images_2(imgA: np.ndarray, imgB: np.ndarray) -> float:
     """
     assert isinstance(imgA, np.ndarray)
     assert isinstance(imgB, np.ndarray)
+
     # Convert to hsv
     hsv_a = cv.cvtColor(imgA, cv.COLOR_BGR2HSV)
     hsv_b = cv.cvtColor(imgB, cv.COLOR_BGR2HSV)
@@ -251,18 +258,23 @@ def main():
 
     video_path = "../resources/test.mp4"
     spell_path = "../resources/summoner_spells/"
+
     ## Initialize
     # Load spell images
     for i in range(len(spell_file)):
         spell_image = cv.imread(spell_path + spell_file[i])
         spell_image_data.append(spell_image)
+
         # OpenCV uses BGR as its default color order for images, so convert to RGB
         spell_image_data[i] = cv.cvtColor(spell_image_data[i], cv.COLOR_BGR2RGB)
+
     # Resize all spell images to 20x20
     for i in range(len(spell_image_data)):
         spell_image_data[i] = cv.resize(spell_image_data[i], (20, 20))
+
     # Convert video to list of frames and saves them in *frames* list variable.
     frames = video_to_list(video_path)
+
     ## Begin frame analysis
     # for frame in frames:
     #     # Extract spell images from the frame.
