@@ -1,11 +1,14 @@
 """
-Name : sw0000j
+#   File Name: finding_ultimate.py
+#        Team: visual recognition 2
+#  Programmer: SW0000J
+#  Start Date: 07/08/20
+# Last Update: July 13, 2020
+#     Purpose: to find ultimate skill's coordinate
 """
 
-# from matplotlib import pyplot as plt
-
 import cv2 as cv
-# import numpy as np
+import numpy as np
 
 """
 Ultimate Skill's center(x, y) coordinate
@@ -26,8 +29,20 @@ radius : 12
 # player 5 [x, y] -> [1847, 577]
 """
 
-def get_ultimate_coordinate(circle_x : int, circle_y : int) -> None:
-    # get image appended ultimate detect circle
+def draw_circle_on_ultimate(circle_x : int, circle_y : int) -> None:
+    """
+    Draw circle on ultimate to get ultimate skill's coordinate
+
+    Args:
+        circle_x: x-coordinate of the center of the circle
+        circle_y: y-coordinate of the center of the circle
+
+    Returns:
+        Just
+
+    Raises:
+        None
+    """
     img = cv.imread("test.jpeg")
 
     img = cv.circle(img, (circle_x, circle_y), 12, (0, 0, 255), 1)
@@ -37,11 +52,8 @@ def get_ultimate_coordinate(circle_x : int, circle_y : int) -> None:
     cv.destroyAllWindows()
 
 def main() -> None:
-    """
-    loading and finding champion's ultimate
-    """
 
-    get_ultimate_coordinate(1847, 165)
+    draw_circle_on_ultimate(1847, 165)
 
 
 if __name__ == "__main__":
