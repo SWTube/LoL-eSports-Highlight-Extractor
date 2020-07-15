@@ -99,15 +99,15 @@ def video_to_list(path: str) -> (list, int):
     return frame_list, frame_count
 
 
-def mean_squared_error(imgA: np.ndarray, imgB: np.ndarray) -> float:
+def mean_squared_error(image_one: np.ndarray, image_two: np.ndarray) -> float:
     """
     Calculates the 'Mean Squared Error' between the two images,
     which is the sum of the squared difference between the two images;
     CAUTION! the two images must have the same dimension.
 
     Args:
-        imgA: Image to compare.
-        imgB: Original image
+        image_one: Image to compare.
+        image_two: Original image
 
     Returns:
         MSE. Lower the error, the more "similar" the two images are.
@@ -115,23 +115,23 @@ def mean_squared_error(imgA: np.ndarray, imgB: np.ndarray) -> float:
     Raises:
         None
     """
-    assert isinstance(imgA, np.ndarray)
-    assert isinstance(imgB, np.ndarray)
+    assert isinstance(image_one, np.ndarray)
+    assert isinstance(image_two, np.ndarray)
 
-    error = np.sum((imgA.astype("float") - imgB.astype("float")) ** 2)
-    error /= float(imgA.shape[0] * imgA.shape[1])
+    error = np.sum((image_one.astype("float") - image_two.astype("float")) ** 2)
+    error /= float(image_one.shape[0] * image_one.shape[1])
 
     return error
 
 
 # LAC
-def compare_images_1(imgA: np.ndarray, imgB: np.ndarray) -> float:
+def compare_images_1(image_one: np.ndarray, image_two: np.ndarray) -> float:
     """
     Calculates the similarity of the two images.
 
     Args:
-        imgA: Image to compare.
-        imgB: Original image
+        image_one: Image to compare.
+        image_two: Original image
 
     Returns:
         "Similarity" percentage of the two images.
@@ -139,14 +139,14 @@ def compare_images_1(imgA: np.ndarray, imgB: np.ndarray) -> float:
     Raises:
         None
     """
-    assert isinstance(imgA, np.ndarray)
-    assert isinstance(imgB, np.ndarray)
+    assert isinstance(image_one, np.ndarray)
+    assert isinstance(image_two, np.ndarray)
 
     # compute the mean squared error
-    mse_value = mean_squared_error(imgA, imgB)
+    mse_value = mean_squared_error(image_one, image_two)
 
     # compute the structural similarity
-    ssim_value = metrics.structural_similarity(imgA, imgB, multichannel=True)
+    ssim_value = metrics.structural_similarity(image_one, image_two, multichannel=True)
 
     # setup the figure
     fig = plt.figure("Image Comparison")
@@ -154,12 +154,12 @@ def compare_images_1(imgA: np.ndarray, imgB: np.ndarray) -> float:
 
     # show first image
     axis_img_a = fig.add_subplot(1, 2, 1)
-    plt.imshow(imgA, cmap=plt.cm.gray)
+    plt.imshow(image_one, cmap=plt.cm.gray)
     plt.axis("off")
 
     # show the second image
     axis_img_b = fig.add_subplot(1, 2, 2)
-    plt.imshow(imgB, cmap=plt.cm.gray)
+    plt.imshow(image_two, cmap=plt.cm.gray)
     plt.axis("off")
 
     # show the images
@@ -169,13 +169,13 @@ def compare_images_1(imgA: np.ndarray, imgB: np.ndarray) -> float:
 
 
 # LJH
-def compare_images_2(imgA: np.ndarray, imgB: np.ndarray) -> float:
+def compare_images_2(image_one: np.ndarray, image_two: np.ndarray) -> float:
     """
     Compare two images through histogram
 
     Args:
-        imgA: image in video
-        imgB: original image
+        image_one: image in video
+        image_two: original image
 
     Returns:
         Similarity between two images
@@ -183,12 +183,12 @@ def compare_images_2(imgA: np.ndarray, imgB: np.ndarray) -> float:
     Raises:
         None
     """
-    assert isinstance(imgA, np.ndarray)
-    assert isinstance(imgB, np.ndarray)
+    assert isinstance(image_one, np.ndarray)
+    assert isinstance(image_two, np.ndarray)
 
     # Convert to hsv
-    hsv_a = cv.cvtColor(imgA, cv.COLOR_BGR2HSV)
-    hsv_b = cv.cvtColor(imgB, cv.COLOR_BGR2HSV)
+    hsv_a = cv.cvtColor(image_one, cv.COLOR_BGR2HSV)
+    hsv_b = cv.cvtColor(image_two, cv.COLOR_BGR2HSV)
 
     # Calculate and Normalize histogram
     hist_a = cv.calcHist([hsv_a], [0], None, [256], [0, 256])
