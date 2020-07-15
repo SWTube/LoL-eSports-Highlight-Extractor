@@ -84,17 +84,19 @@ def video_to_list(path: str) -> (list, int):
         print("frame_rate is invalid.")
         assert False
 
-    for _ in range(frame_count // frame_rate):
+    for frame_no in range(frame_count):
         ret, frame = vid.read()
 
         if not ret:
             break
 
-        frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-        frame_list.append(frame)
+        if frame_no % frame_rate == 0:
+            frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+            frame_list.append(frame)
+        else:
+            continue
 
     vid.release()
-    # vid.destroyAllWindows()
 
     return frame_list, frame_count
 
@@ -291,27 +293,25 @@ def main():
     # Convert video to list of frames and saves them in *frames* list variable.
     frames, frame_count = video_to_list(video_path)
 
-    print("frame_count: ", frame_count)
-    print("len(frames): ", len(frames))
-
     ## Begin frame analysis
-    # for frame in frames:
-    #     # Extract spell images from the frame.
-    #     in_game_spell = extract_spell_images(frame)
-
+    for frame in frames:
+        # Extract spell images from the frame.
+        in_game_spell = extract_spell_images(frame, 13)
+        plt.imshow(in_game_spell)
+        plt.show()
     # -- test -- #
     print("-- test --")
 
     # idx = 2, 12
     # images in those indexes are on cooldown.
 
-    in_game_spell = extract_spell_images(frames[0])
-
-    compare_images_1(in_game_spell[2], spell_image_data[1])
-    compare_images_1(in_game_spell[12], spell_image_data[1])
-
-    print(compare_images_2(in_game_spell[2], spell_image_data[1]))
-    print(compare_images_2(in_game_spell[12], spell_image_data[1]))
+    # in_game_spell = extract_spell_images(frames[0])
+    #
+    # compare_images_1(in_game_spell[2], spell_image_data[1])
+    # compare_images_1(in_game_spell[12], spell_image_data[1])
+    #
+    # print(compare_images_2(in_game_spell[2], spell_image_data[1]))
+    # print(compare_images_2(in_game_spell[12], spell_image_data[1]))
 
 
 if __name__ == '__main__':
