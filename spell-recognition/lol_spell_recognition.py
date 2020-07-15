@@ -3,6 +3,7 @@
 #        Team: visual recognition 2
 #  Programmer: littlecsi
                bluehyena
+               kkim99
 #  Start Date: 06/05/20
 # Last Update: July 10, 2020
 #     Purpose: This file specifically tries to recognize the cooltime of summoner spells
@@ -84,7 +85,7 @@ def video_to_list(path: str) -> list:
     return frame_list
 
 
-def mse(imgA: np.ndarray, imgB: np.ndarray) -> float:
+def mean_squared_error(imgA: np.ndarray, imgB: np.ndarray) -> float:
     """
     Calculates the 'Mean Squared Error' between the two images,
     which is the sum of the squared difference between the two images;
@@ -126,25 +127,31 @@ def compare_images_1(imgA: np.ndarray, imgB: np.ndarray) -> float:
     """
     assert isinstance(imgA, np.ndarray)
     assert isinstance(imgB, np.ndarray)
+
     # compute the mean squared error
-    m = mse(imgA, imgB)
+    mse_value = mean_squared_error(imgA, imgB)
+
     # compute the structural similarity
-    s = metrics.structural_similarity(imgA, imgB, multichannel=True)
+    ssim_value = metrics.structural_similarity(imgA, imgB, multichannel=True)
+
     # setup the figure
     fig = plt.figure("Image Comparison")
-    plt.suptitle("MSE: %.2f, SSIM: %.2f" % (m, s))
+    plt.suptitle("MSE: %.2f, SSIM: %.2f" % (mse_value, ssim_value))
+
     # show first image
-    ax = fig.add_subplot(1, 2, 1)
+    axis_img_a = fig.add_subplot(1, 2, 1)
     plt.imshow(imgA, cmap=plt.cm.gray)
     plt.axis("off")
+
     # show the second image
-    ax = fig.add_subplot(1, 2, 2)
+    axis_img_b = fig.add_subplot(1, 2, 2)
     plt.imshow(imgB, cmap=plt.cm.gray)
     plt.axis("off")
+
     # show the images
     plt.show()
 
-    return s
+    return ssim_value
 
 
 # LJH
@@ -164,6 +171,7 @@ def compare_images_2(imgA: np.ndarray, imgB: np.ndarray) -> float:
     """
     assert isinstance(imgA, np.ndarray)
     assert isinstance(imgB, np.ndarray)
+
     # Convert to hsv
     hsv_a = cv.cvtColor(imgA, cv.COLOR_BGR2HSV)
     hsv_b = cv.cvtColor(imgB, cv.COLOR_BGR2HSV)
@@ -180,24 +188,27 @@ def compare_images_2(imgA: np.ndarray, imgB: np.ndarray) -> float:
     return a_b_comparison
 
 
-def extract_spell_images(frame: np.ndarray) -> list:
+def extract_spell_images(frame: np.ndarray, loc: int = 0) -> list:
     """
     Extracts summoners' spell images from the in-game image given as a parameter.
 
     Args:
         frame: A single frame from the game video.
+        loc: An integer between 1~20 representing one specific location of the spell.
+             If nothing is parsed, function returns all spells in the given frame.
+             1 - Left Summoner 1 D, 2 - Left SUmmoner 1 F, ... , 20 - Right Summoner 5 - F
 
     Returns:
-        list of summoners' spell images. This list will contain
-
-        [
-            ["Summoner 1 D"], ["Summoner 1 F"], ["Summoner 2 D"], ["Summoner 2 F"], ...
-        ]
+        list of summoners' spell image(s). This list will look like:
+        [["Summoner 1 D"], ["Summoner 1 F"], ["Summoner 2 D"], ["Summoner 2 F"], ...]
+            or
+        ["Summoner 4 F"]
 
     Raises:
         None
     """
     assert isinstance(frame, np.ndarray)
+    assert isinstance(loc, int)
 
     in_game_spell = []
     position = [
@@ -213,16 +224,28 @@ def extract_spell_images(frame: np.ndarray) -> list:
         [570, 1894, 589, 1913], [593, 1894, 612, 1913]
     ]
 
-    for i in range(20):
-        in_game_spell.append([])
-        for y in range(position[i][0], position[i][2] + 1):
-            in_game_spell[i].append([])
-            for x in range(position[i][1], position[i][3] + 1):
-                in_game_spell[i][y - position[i][0]].append(frame[y][x])
-                # in_game_spell[i] = np.append(in_game_spell, frame[y][x], axis=0)
-        in_game_spell[i] = np.array(in_game_spell[i], dtype="uint8")
+    if (loc != 0) and (loc > 0) and loc <= 20:
+        loc -= 1
+        for y in range(position[loc][0], position[loc][2] + 1):
+            in_game_spell.append([])
+            for x in range(position[loc][1], position[loc][3] + 1):
+                in_game_spell[y - position[loc][0]].append(frame[y][x])
+        in_game_spell = np.array(in_game_spell, dtype="uint8")
 
-    return in_game_spell
+        return in_game_spell
+    elif loc == 0:
+        for i in range(20):
+            in_game_spell.append([])
+            for y in range(position[i][0], position[i][2] + 1):
+                in_game_spell[i].append([])
+                for x in range(position[i][1], position[i][3] + 1):
+                    in_game_spell[i][y - position[i][0]].append(frame[y][x])
+                    # in_game_spell[i] = np.append(in_game_spell, frame[y][x], axis=0)
+            in_game_spell[i] = np.array(in_game_spell[i], dtype="uint8")
+
+        return in_game_spell
+    else:
+        assert False
 
 
 def main():
@@ -235,20 +258,25 @@ def main():
 
     video_path = "../resources/test.mp4"
     spell_path = "../resources/summoner_spells/"
+
     ## Initialize
     # Load spell images
     for i in range(len(spell_file)):
         spell_image = cv.imread(spell_path + spell_file[i])
         spell_image_data.append(spell_image)
+
         # OpenCV uses BGR as its default color order for images, so convert to RGB
         spell_image_data[i] = cv.cvtColor(spell_image_data[i], cv.COLOR_BGR2RGB)
+
     # Resize all spell images to 20x20
     for i in range(len(spell_image_data)):
         spell_image_data[i] = cv.resize(spell_image_data[i], (20, 20))
+
     # Convert video to list of frames and saves them in *frames* list variable.
     frames = video_to_list(video_path)
-    # ## Begin frame analysis
-    # for frame in range(len(frames)):
+
+    ## Begin frame analysis
+    # for frame in frames:
     #     # Extract spell images from the frame.
     #     in_game_spell = extract_spell_images(frame)
 
