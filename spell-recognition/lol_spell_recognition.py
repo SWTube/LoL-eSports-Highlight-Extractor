@@ -51,7 +51,7 @@ No5 Summoner F Spells Coordinates [593, 1894] -> [612, 1913]
 """
 
 
-def video_to_list(path: str) -> list:
+def video_to_list(path: str) -> (list, int):
     """
     Converts a video file to frames and returns a list of them.
 
@@ -59,7 +59,7 @@ def video_to_list(path: str) -> list:
         path: String value of path to video file.
 
     Returns:
-        If correct path is given, this function will convert the video file to a list of frames.
+        If correct path is given, this function will return a list of frames and the number of frames.
         If given path is wrong, returns an empty list.
 
     Raises:
@@ -68,9 +68,23 @@ def video_to_list(path: str) -> list:
     assert isinstance(path, str)
 
     frame_list = []
+    frame_count = 0
+    frame_rate = 0
     vid = cv.VideoCapture(path)
 
-    while vid.isOpened():
+    frame_count = int(vid.get(cv.CAP_PROP_FRAME_COUNT))
+    frame_rate = vid.get(cv.CAP_PROP_FPS)
+
+    # This rules out Drop-frame videos
+    if not frame_rate.is_integer():
+        frame_rate = int(frame_rate + 1)
+    elif frame_rate.is_integer():
+        frame_rate = int(frame_rate)
+    else:
+        print("frame_rate is invalid.")
+        assert False
+
+    for _ in range(frame_count // frame_rate):
         ret, frame = vid.read()
 
         if not ret:
@@ -82,7 +96,7 @@ def video_to_list(path: str) -> list:
     vid.release()
     # vid.destroyAllWindows()
 
-    return frame_list
+    return frame_list, frame_count
 
 
 def mean_squared_error(imgA: np.ndarray, imgB: np.ndarray) -> float:
@@ -245,6 +259,7 @@ def extract_spell_images(frame: np.ndarray, loc: int = 0) -> list:
 
         return in_game_spell
     else:
+        print("Invalid argument parsed into extract_spell_images() function.")
         assert False
 
 
@@ -252,11 +267,12 @@ def main():
     frames = []
     spell_image_data = []
     in_game_spell = []
+    frame_count = 0
     spell_file = ["Barrier.png", "Challenging_Smite.png", "Chilling_Smite.png", "Clarity.png", "Cleanse.png",
                   "Exhaust.png", "Flash.png", "Ghost.png", "Heal.png",
                   "Hexflash.png", "Ignite.png", "Smite.png", "Teleport.png"]
 
-    video_path = "../resources/test.mp4"
+    video_path = "../resources/smite_test.mp4"
     spell_path = "../resources/summoner_spells/"
 
     ## Initialize
@@ -273,7 +289,10 @@ def main():
         spell_image_data[i] = cv.resize(spell_image_data[i], (20, 20))
 
     # Convert video to list of frames and saves them in *frames* list variable.
-    frames = video_to_list(video_path)
+    frames, frame_count = video_to_list(video_path)
+
+    print("frame_count: ", frame_count)
+    print("len(frames): ", len(frames))
 
     ## Begin frame analysis
     # for frame in frames:
@@ -281,6 +300,7 @@ def main():
     #     in_game_spell = extract_spell_images(frame)
 
     # -- test -- #
+    print("-- test --")
 
     # idx = 2, 12
     # images in those indexes are on cooldown.
