@@ -7,7 +7,18 @@ from types import FunctionType
 
 def save_graph(compare_function: FunctionType, original_spell_image: np.ndarray, video_frames: list) -> None:
     """
-    
+     Make graph with compare_function's return value and save as PNG file
+
+    Args:
+        compare_function: Function of image comparison
+        original_spell_image: Original image of spell
+        video_frames : List of video
+
+    Returns:
+        None
+
+    Raises:
+        None
     """
     assert callable(compare_function)
 
