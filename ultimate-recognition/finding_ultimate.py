@@ -3,12 +3,13 @@
 #        Team: visual recognition 2
 #  Programmer: SW0000J
 #  Start Date: 07/08/20
-# Last Update: July 13, 2020
-#     Purpose: to find ultimate skill's coordinate
+# Last Update: July 20, 2020
+#     Purpose: to find ultimate skill
 """
 
 import cv2 as cv
 import numpy as np
+from matplotlib import pyplot as plt
 
 """
 Ultimate Skill's center(x, y) coordinate
@@ -68,6 +69,7 @@ def draw_circle_on_ultimate(circle_x : int, circle_y : int) -> None:
     cv.waitKey(0)
     cv.destroyAllWindows()
 
+
 def draw_rectangle_on_champion(rectangle_x : int, rectangle_y : int) -> None:
     """
     Draw rectangle on champion to get champions icon's coordinate
@@ -89,6 +91,49 @@ def draw_rectangle_on_champion(rectangle_x : int, rectangle_y : int) -> None:
     cv.imshow("test", img)
     cv.waitKey(0)
     cv.destroyAllWindows()
+
+
+def compare_champion_icon_with_champion_icon_data(champion_image_path : str, test_image_path : str,
+                                                  champion_icon_file_list : list) -> int:
+    """
+        Compare two images(champion icon & champion icon data) using 'SIFT' similarity
+        match_list mean how similar images they are
+
+        Args:
+            champion_image_path : champion image path
+            test_image_path : test image path
+
+        Returns:
+            match list's length
+
+        Raises:
+            None
+    """
+    matched_list = []
+    for index in range(len(champion_icon_file_list)):
+
+        img1 = cv.imread(champion_image_path + champion_icon_file_list[index])
+        img2 = cv.imread(test_image_path)
+
+        sift = cv.xfeatures2d.SIFT_create()
+        kp1, des1 = sift.detectAndCompute(img1, None)
+        kp2, des2 = sift.detectAndCompute(img2, None)
+        bf = cv.BFMatcher()
+        matches = bf.knnMatch(des1, des2, k=2)
+
+        match_list = []
+        for m, n in matches:
+            if m.distance < 0.3 * n.distance:
+                match_list.append([m])
+        matched_list.append(len(match_list))
+        print('{} done'.format(index))
+
+    best_matched_index = matched_list.index(max(matched_list))
+
+    return best_matched_index
+    #img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2, good, None, flags=2)
+    #plt.imshow(img3), plt.show()
+
 
 def main() -> None:
     #draw_circle_on_ultimate(1847, 165)
@@ -127,19 +172,22 @@ def main() -> None:
                             "Zed.png", "Ziggs.png", "Zilean.png", "Zoe.png", "Zyra.png"]
 
     champion_image_path = "../resources/champions_image/"
+    test_image = "test.jpeg"
 
     # Load champion icon images
-    for i in range(len(champion_icon_files)):
-        champion_icon = cv.imread(champion_image_path + champion_icon_files[i])
+    for index in range(len(champion_icon_files)):
+        champion_icon = cv.imread(champion_image_path + champion_icon_files[index])
         champion_icon_data.append(champion_icon)
 
-        champion_icon_data[i] = cv.cvtColor(champion_icon_data[i], cv.COLOR_BGR2RGB)
+        champion_icon_data[index] = cv.cvtColor(champion_icon_data[index], cv.COLOR_BGR2RGB)
 
     # Resize champion icon images(40 x 40)
-    for i in range(len(champion_icon_data)):
-        champion_icon_data[i] = cv.resize(champion_icon_data[i], (40, 40))
+    for index in range(len(champion_icon_data)):
+        champion_icon_data[index] = cv.resize(champion_icon_data[index], (40, 40))
 
+    # find best match index
 
+    print(compare_champion_icon_with_champion_icon_data(champion_image_path, test_image, champion_icon_files))
 
 
 
