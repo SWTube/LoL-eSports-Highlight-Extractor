@@ -14,6 +14,25 @@ import numpy as np
 from matplotlib import pyplot as plt
 from skimage import metrics
 
+# Spell Highlight Scores
+clarity_score = 0.1
+
+smite_score = 5
+challenging_smite_score = 5
+chilling_smite_score = 5
+hexflash_score = 5
+
+ghost_score = 10
+exhaust_score = 10
+ignite_score = 10
+heal_score = 10
+barrier_score = 10
+cleanse_score = 10
+
+teleport_score = 15
+
+flash_score = 20
+
 """
 All spells are assumed to be 20x20 pixels
 
