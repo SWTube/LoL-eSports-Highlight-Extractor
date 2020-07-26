@@ -2,21 +2,21 @@
 #        Team: standardization
 #  Programmer: ssw03270
 #  Start Date: 07/08/20
-# Last Update: July 10, 2020
+# Last Update: July 19, 2020
 #     Purpose: Almost highlight video has 3 game.
 #              So we have to cut it to compare with our highlights.
 #              This program help to do it.
-
 
 # 1620, 780 (1920, 1080) : minimap start point in edit video, raw video size
 # If you want to see visual working process, erase #(notes) under the code.
 
 import cv2 as cv
 import numpy as np
+import os
 from matplotlib import pyplot as plt
 
 
-def matching(video_capture: np.ndarray, video_path: str, compare_image: np.ndarray) -> None:
+def matching(video_file: str, video_capture: np.ndarray, video_path: str, compare_image: np.ndarray) -> None:
     """
         For comparing video's capture and image
 
@@ -32,33 +32,58 @@ def matching(video_capture: np.ndarray, video_path: str, compare_image: np.ndarr
             N/A
     """
     checker = []
-    while True:
-        ret, frame = video_capture.read()
-        frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    is_writing = False
+    game_set = ["_GAME1", "_GAME2", "_GAME3", "_GAME4", "_GAME5"]
+    game_num = 0
 
-        width_end, height_end = frame.shape
+    width = int(video_capture.get(cv.CAP_PROP_FRAME_WIDTH))
+    height = int(video_capture.get(cv.CAP_PROP_FRAME_HEIGHT))
+    fourcc = cv.VideoWriter_fourcc(*"MP4V")
+    fps = video_capture.get(cv.CAP_PROP_FPS)
+    out = cv.VideoWriter(video_file + game_set[game_num] + ".mp4", fourcc, fps, (width, height), 1)
+
+    sift_ans = False
+    while True:
+        ret, frame_color = video_capture.read()
+        if not ret:
+            break
+        frame_gray = cv.cvtColor(frame_color, cv.COLOR_BGR2GRAY)
+        width_end, height_end = frame_gray.shape
 
         width_start = round(780 / 1080 * width_end)
         height_start = round(1620 / 1920 * height_end)
 
-        frame_resize = frame[width_start: width_end, height_start: height_end]
+        frame_resize = frame_gray[width_start: width_end, height_start: height_end]
 
         # Showing video.
-        # cv.imshow("VideoFrame", frame)
+        cv.imshow("VideoFrame", frame_gray)
 
-        if video_capture.get(cv.CAP_PROP_POS_FRAMES) % 30 == 0:
+        if video_capture.get(cv.CAP_PROP_POS_FRAMES) % fps == 0:
             print("start comparing..." + str(video_capture.get(cv.CAP_PROP_POS_FRAMES)))
-            checker.append([video_capture.get(cv.CAP_PROP_POS_FRAMES), sift_algorithm(frame_resize, compare_image)])
+            sift_ans = sift_algorithm(frame_resize, compare_image)
+            checker.append([video_capture.get(cv.CAP_PROP_POS_FRAMES), sift_ans])
+
+        if is_writing and not sift_ans :
+            game_num += 1
+            out = cv.VideoWriter(video_file + game_set[game_num] + ".mp4", fourcc, fps, (width, height), 1)
+            is_writing = False
+
+        if sift_ans:
+            is_writing = True
+            out.write(frame_color)
+            cv.imshow("EditedFrame", frame_color)
 
         # Stopping video.
-        # if cv.waitKey(1) > 0:
-        #     break
+        if cv.waitKey(1) > 0:
+            break
 
     write_txt(checker)
+    out.release()
     video_capture.release()
     cv.destroyAllWindows()
 
-def sift_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> int:
+
+def sift_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> bool:
     """
         Using sift algorithm to compare video's capture and image
 
@@ -87,17 +112,17 @@ def sift_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> int:
             good.append([m])
 
     # Showing plt.
-    # plt_image = cv.drawMatchesKnn(frame_resize, keypoint_1, compare_image, keypoint_2, good, None, flags=2)
-    # plt.imshow(plt_image)
-    # plt.show()
-
+    plt_image = cv.drawMatchesKnn(frame_resize, keypoint_1, compare_image, keypoint_2, good, None, flags=2)
+    plt.imshow(plt_image)
+    plt.show()
 
     if len(good) > 30:
         print("this frame is ingame.")
-        return 1
+        return True
     else:
         print("this frame isn't ingame.")
-        return 0
+        return False
+
 
 def write_txt(checker: list) -> None:
     """
@@ -117,6 +142,7 @@ def write_txt(checker: list) -> None:
     for data in checker:
         f.writelines(str(data) + "\n")
     f.close()
+
 
 def make_resource(path: str, type: int) -> np.ndarray:
     """
@@ -138,21 +164,41 @@ def make_resource(path: str, type: int) -> np.ndarray:
     elif type == 1:
         return cv.imread(path, cv.COLOR_BGR2GRAY)
 
+
+def edit_path() -> tuple:
+    """
+        Making a path, video and image for comparing
+
+        Args:
+            N/A
+
+        Returns:
+            Returns path of image and video for comparing
+
+        Raises:
+            N/A
+    """
+    path = os.getcwd()
+    path = path.replace("\\cut-highlights", "")
+
+    image_path = path + "\\resources\\standardization\\sample_image"
+    video_path = path + "\\resources\\standardization\\sample_video"
+
+    return (image_path, video_path)
+
+
 def main() -> None:
-    video_path = "C:/Users/ttd85/PycharmProjects/LoL-eSports-Highlight-Extractor/resources/standardization/sample_video/FULL_LCKSpring2020_GRFvsHLE_W9D1_G1.mp4"
-    video_capture = make_resource(video_path, 0)
+    image_path, video_path = edit_path()
+    video_list = os.listdir(video_path)
+    for video_file in video_list:
+        new_video_path = video_path + "\\" + video_file
+        video_capture = make_resource(new_video_path, 0)
 
-    compare_path = "C:/Users/ttd85/PycharmProjects/LoL-eSports-Highlight-Extractor/resources/standardization/sample_image/minimap.png"
-    compare_image = make_resource(compare_path, 1)
+        minimap_file = image_path + "\\minimap.png"
+        minimap_image = make_resource(minimap_file, 1)
 
-    matching(video_capture, video_path, compare_image)
+        matching(video_file[0:len(video_file) - 4], video_capture, video_path, minimap_image)
+
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
