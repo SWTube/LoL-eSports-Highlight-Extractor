@@ -20,7 +20,10 @@ def save_graph(compare_function: FunctionType, original_spell_image: np.ndarray,
     Raises:
         None
     """
+
     assert callable(compare_function)
+    assert isinstance(original_spell_image, np.ndarray)
+    assert isinstance(video_frames, list)
 
     ## Variable Construction
     x_axis = []
