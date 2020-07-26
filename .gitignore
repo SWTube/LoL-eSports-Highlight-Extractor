@@ -10,3 +10,4 @@ __pycache__/lol_image.cpython-37.pyc
 *.xml
 .DS_Store
 spell-recognition/__pycache__/lol_spell_recognition.cpython-37.pyc
+/spell-recognition/credentials.json
