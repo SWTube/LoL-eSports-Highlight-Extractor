@@ -18,7 +18,7 @@ del df_chat_column[0]
 chat_file.close()
 
 
-def extract_num_of_chats_in_5sec() -> float: # 5초안에 25개의 채팅이 입력되면 하이라이트로 처리
+def extract_num_of_chats_in_5sec() -> str:
     num_start = 0
     num_end = 1
     highlight_time = []
@@ -60,7 +60,7 @@ def extract_num_of_chats_in_5sec() -> float: # 5초안에 25개의 채팅이 입
 
 
 
-def extract_time_of_50chat() -> float: #50개의 채팅이 10초안에 입력되면 하이라이트로 처리
+def extract_time_of_50chat() -> str: 
 
     num_start = 0
     num_end = 50
