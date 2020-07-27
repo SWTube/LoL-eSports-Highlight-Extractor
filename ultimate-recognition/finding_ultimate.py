@@ -3,7 +3,7 @@
 #        Team: visual recognition 2
 #  Programmer: SW0000J
 #  Start Date: 07/08/20
-# Last Update: July 20, 2020
+# Last Update: July 27, 2020
 #     Purpose: to find ultimate skill
 """
 
@@ -94,7 +94,7 @@ def draw_rectangle_on_champion(rectangle_x : int, rectangle_y : int) -> None:
 
 
 def compare_champion_icon_with_champion_icon_data(champion_image_path : str, test_image_path : str,
-                                                  champion_icon_file_list : list) -> int:
+                                                  champion_icon_file_list : list) -> list:
     """
         Compare two images(champion icon & champion icon data) using 'SIFT' similarity
         match_list mean how similar images they are
@@ -104,31 +104,49 @@ def compare_champion_icon_with_champion_icon_data(champion_image_path : str, tes
             test_image_path : test image path
 
         Returns:
-            match list's length
+            best matched list
 
         Raises:
             None
     """
-    matched_list = []
-    for index in range(len(champion_icon_file_list)):
+    champions_icon_coordinate = [
+        [160, 31],
+        [263, 31],
+        [366, 31],
+        [468, 31],
+        [572, 31],
+        [160, 1847],
+        [263, 1847],
+        [366, 1847],
+        [468, 1847],
+        [572, 1847],
+    ]
+    best_matched_index = []
 
-        img1 = cv.imread(champion_image_path + champion_icon_file_list[index])
-        img2 = cv.imread(test_image_path)
+    for y_coordinate, x_coordinate in champions_icon_coordinate:
+        matched_list = []
 
-        sift = cv.xfeatures2d.SIFT_create()
-        kp1, des1 = sift.detectAndCompute(img1, None)
-        kp2, des2 = sift.detectAndCompute(img2, None)
-        bf = cv.BFMatcher()
-        matches = bf.knnMatch(des1, des2, k=2)
+        for index in range(len(champion_icon_file_list)):
 
-        match_list = []
-        for m, n in matches:
-            if m.distance < 0.3 * n.distance:
-                match_list.append([m])
-        matched_list.append(len(match_list))
-        print('{} done'.format(index))
+            img1 = cv.imread(champion_image_path + champion_icon_file_list[index])
+            img2 = cv.imread(test_image_path)
+            src = img2[y_coordinate:y_coordinate+40, x_coordinate:x_coordinate+40]
 
-    best_matched_index = matched_list.index(max(matched_list))
+            sift = cv.xfeatures2d.SIFT_create()
+            kp1, des1 = sift.detectAndCompute(img1, None)
+            kp2, des2 = sift.detectAndCompute(src, None)
+            bf = cv.BFMatcher()
+            matches = bf.knnMatch(des1, des2, k=2)
+
+            match_list = []
+
+            for m, n in matches:
+                if m.distance < 0.5 * n.distance:
+                    match_list.append([m])
+            matched_list.append(len(match_list))
+            print('{} done'.format(index))
+
+        best_matched_index.append(matched_list.index(max(matched_list)))
 
     return best_matched_index
     #img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2, good, None, flags=2)
@@ -145,34 +163,17 @@ def main() -> None:
     in_game_champion_icon = []
     in_game_ultimate_skills = []
 
-    champion_icon_files = ["Aatrox.png", "Ahri.png", "Akali.png", "Alistar.png", "Amumu.png", "Anivia.png",
-                            "Annie.png", "Aphelios.png", "Ashe.png", "Aurelionsol.png", "Azir.png", "Bard.png",
-                            "Blitzcrank.png", "Brand.png", "Braum.png", "Caitlyn.png", "Camille.png",
-                            "Cassiopeia.png", "Chogath.png", "Corki.png", "Darius.png", "Diana.png", "Dr_mundo.png",
-                            "Draven.png", "Ekko.png", "Elise.png", "Evelynn.png", "Ezreal.png", "Fiddlesticks.png",
-                            "Fiora.png", "Fizz.png", "Galio.png", "Gangplank.png", "Garen.png", "Gnar.png",
-                            "Gragas.png", "Graves.png", "Hecarim.png", "Heimerdinger.png", "Illaoi.png", "Irelia.png",
-                            "Ivern.png", "Janna.png", "Jarvan.png", "Jax.png", "Jayce.png", "Jhin.png", "Jinx.png",
-                            "Kaisa.png", "Kalista.png", "Karma.png", "Karthus.png", "Kassadin.png", "Katarina.png",
-                            "Kayle.png", "Kayn.png", "Kennen.png", "Khazix.png", "Kindred.png", "Kled.png",
-                            "Kogmaw.png", "Leblanc.png", "Leesin.png", "Leona.png", "Lillia.png", "Lissandra.png",
-                            "Lucian.png", "Lulu.png", "Lux.png", "Malphite.png", "Malzahar.png", "Maokai.png",
-                            "Masteryi.png", "Missfortune.png", "Mordekaiser.png", "Morgana.png", "Nami.png",
-                            "Nasus.png", "Nautilus.png", "Neeko.png", "Nidalee.png", "Nocturne.png", "Nunu.png",
-                            "Olaf.png", "Orianna.png", "Ornn.png", "Pantheon.png", "Poppy.png", "Pyke.png",
-                            "Qiyana.png", "Quinn.png", "Rakan.png", "Rammus.png", "Reksai.png", "Renekton.png",
-                            "Rengar.png", "Riven.png", "Rumble.png", "Ryze.png", "Sejuani.png", "Senna.png",
-                            "Sett.png", "Shaco.png", "Shen.png", "Shyvana.png", "Singed.png", "Sion.png",
-                            "Sivir.png", "Skarner.png", "Sona.png", "Soraka.png", "Swain.png", "Sylas.png",
-                            "Syndra.png", "Tahmkench.png", "Taliyah.png", "Talon.png", "Taric.png", "Teemo.png",
-                            "Thresh.png", "Tristana.png", "Trundle.png", "Tryndamere.png", "Twistedfate.png",
-                            "Twitch.png", "Udyr.png", "Urgot.png", "Varus.png", "Vayne.png", "Veigar.png", "Velkoz.png",
-                            "Vi.png", "Viktor.png", "Vladimir.png", "Volibear.png", "Warwick.png", "Wukong.png",
-                            "Xayah.png", "Xerath.png", "Xinzhao.png", "Yasuo.png", "Yorick.png", "Yuumi.png", "Zac.png",
-                            "Zed.png", "Ziggs.png", "Zilean.png", "Zoe.png", "Zyra.png"]
+    champion_icon_files = []
 
     champion_image_path = "../resources/champions_image/"
-    test_image = "test.jpeg"
+    test_image = "test2.jpeg"
+
+    # Load champion's name list & append name to list
+    champion_list = open("../resources/champion_list.txt", 'r')
+    lines = champion_list.readlines()
+    for line in lines:
+        champion_icon_files.append(line[:-1])
+    champion_list.close()
 
     # Load champion icon images
     for index in range(len(champion_icon_files)):
@@ -185,12 +186,8 @@ def main() -> None:
     for index in range(len(champion_icon_data)):
         champion_icon_data[index] = cv.resize(champion_icon_data[index], (40, 40))
 
-    # find best match index
-
-    print(compare_champion_icon_with_champion_icon_data(champion_image_path, test_image, champion_icon_files))
-
-
-
+    # Get best match index list
+    champion_index = compare_champion_icon_with_champion_icon_data(champion_image_path, test_image, champion_icon_files)
 
 if __name__ == "__main__":
     main()
