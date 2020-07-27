@@ -1,0 +1,16 @@
+#not important
+nidalee.png
+Kogmaw.png
+Teemo.png
+Kassadin.png
+Elise.png
+Udry.png
+Corki.png
+Zoe.png
+Karma.png
+
+#image chainge
+LeBlanc.png
+Anivia.png
+Jayce.png
+Quinn.png
