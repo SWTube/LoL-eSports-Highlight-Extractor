@@ -5,7 +5,7 @@
                bluehyena
 #  Start Date: 06/05/20
 # Last Update: July 29, 2020
-#     Purpose: This file specifically tries to recognize the cooltime of summoner spells
+#     Purpose: Functions that recognizes the cooltime of summoner spells
                and uses this data to calculate highlight score of the game.
 """
 import cv2 as cv
