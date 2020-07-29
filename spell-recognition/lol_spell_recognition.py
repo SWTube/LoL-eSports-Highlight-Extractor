@@ -3,7 +3,6 @@
 #        Team: visual recognition 2
 #  Programmer: littlecsi
                bluehyena
-               kkim99
 #  Start Date: 06/05/20
 # Last Update: July 10, 2020
 #     Purpose: This file specifically tries to recognize the cooltime of summoner spells
@@ -15,59 +14,23 @@ from matplotlib import pyplot as plt
 from skimage import metrics
 
 # Spell Highlight Scores
-clarity_score = 0.1
+g_clarity_score = 0.1
 
-smite_score = 5
-challenging_smite_score = 5
-chilling_smite_score = 5
-hexflash_score = 5
+g_smite_score = 5
+g_challenging_smite_score = 5
+g_chilling_smite_score = 5
+g_hexflash_score = 5
 
-ghost_score = 10
-exhaust_score = 10
-ignite_score = 10
-heal_score = 10
-barrier_score = 10
-cleanse_score = 10
+g_ghost_score = 10
+g_exhaust_score = 10
+g_ignite_score = 10
+g_heal_score = 10
+g_barrier_score = 10
+g_cleanse_score = 10
 
-teleport_score = 15
+g_teleport_score = 15
 
-flash_score = 20
-
-"""
-All spells are assumed to be 20x20 pixels
-
-# Left-Side
-No1 Summoner D Spells Coordinates [158, 5] -> [177, 24]
-No1 Summoner F Spells Coordinates [181, 5] -> [200, 24]
-
-No2 Summoner D Spells Coordinates [261, 5] -> [280, 24]
-No2 Summoner F Spells Coordinates [284, 5] -> [303, 24]
-
-No3 Summoner D Spells Coordinates [364, 5] -> [383, 24]
-No3 Summoner F Spells Coordinates [387, 5] -> [406, 24]
-
-No4 Summoner D Spells Coordinates [466, 5] -> [485, 24]
-No4 Summoner F Spells Coordinates [489, 5] -> [508, 24]
-
-No5 Summoner D Spells Coordinates [570, 5] -> [589, 24]
-No5 Summoner F Spells Coordinates [593, 5] -> [612, 24]
-
-# Right-Side
-No1 Summoner D Spells Coordinates [158, 1894] -> [177, 1913]
-No1 Summoner F Spells Coordinates [181, 1894] -> [200, 1913]
-
-No2 Summoner D Spells Coordinates [261, 1894] -> [280, 1913]
-No2 Summoner F Spells Coordinates [284, 1894] -> [303, 1913]
-
-No3 Summoner D Spells Coordinates [364, 1894] -> [383, 1913]
-No3 Summoner F Spells Coordinates [387, 1894] -> [406, 1913]
-
-No4 Summoner D Spells Coordinates [466, 1894] -> [485, 1913]
-No4 Summoner F Spells Coordinates [489, 1894] -> [508, 1913]
-
-No5 Summoner D Spells Coordinates [570, 1894] -> [589, 1913]
-No5 Summoner F Spells Coordinates [593, 1894] -> [612, 1913]
-"""
+g_flash_score = 20
 
 
 def video_to_list(path: str) -> (list, int):
