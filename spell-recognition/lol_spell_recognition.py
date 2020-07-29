@@ -4,13 +4,13 @@
 #  Programmer: littlecsi
                bluehyena
 #  Start Date: 06/05/20
-# Last Update: July 10, 2020
+# Last Update: July 29, 2020
 #     Purpose: This file specifically tries to recognize the cooltime of summoner spells
                and uses this data to calculate highlight score of the game.
 """
 import cv2 as cv
-import numpy as np
 from matplotlib import pyplot as plt
+import numpy as np
 from skimage import metrics
 
 # Spell Highlight Scores
@@ -54,10 +54,12 @@ def video_to_list(path: str) -> (list, int):
     frame_rate = 0
     vid = cv.VideoCapture(path)
 
+    # Gets total frame count and the FPS of the video
     frame_count = int(vid.get(cv.CAP_PROP_FRAME_COUNT))
     frame_rate = vid.get(cv.CAP_PROP_FPS)
 
     # This rules out Drop-frame videos
+    # 29.97 fps -> 30 fps
     if not frame_rate.is_integer():
         frame_rate = int(frame_rate + 1)
     elif frame_rate.is_integer():
@@ -72,6 +74,7 @@ def video_to_list(path: str) -> (list, int):
         if not ret:
             break
 
+        # Reads every (FPS) frames to increase analysis speed
         if frame_no % frame_rate == 0:
             frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
             frame_list.append(frame)
@@ -222,6 +225,7 @@ def extract_spell_images(frame: np.ndarray, loc: int = 0) -> list:
         [570, 1894, 589, 1913], [593, 1894, 612, 1913]
     ]
 
+    # If the loc argument is parsed
     if (loc != 0) and (loc > 0) and loc <= 20:
         loc -= 1
         for y in range(position[loc][0], position[loc][2] + 1):
@@ -231,6 +235,7 @@ def extract_spell_images(frame: np.ndarray, loc: int = 0) -> list:
         in_game_spell = np.array(in_game_spell, dtype="uint8")
 
         return in_game_spell
+    # If no loc argument is parsed
     elif loc == 0:
         for i in range(20):
             in_game_spell.append([])
@@ -238,7 +243,6 @@ def extract_spell_images(frame: np.ndarray, loc: int = 0) -> list:
                 in_game_spell[i].append([])
                 for x in range(position[i][1], position[i][3] + 1):
                     in_game_spell[i][y - position[i][0]].append(frame[y][x])
-                    # in_game_spell[i] = np.append(in_game_spell, frame[y][x], axis=0)
             in_game_spell[i] = np.array(in_game_spell[i], dtype="uint8")
 
         return in_game_spell
