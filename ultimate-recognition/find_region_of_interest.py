@@ -52,7 +52,7 @@ def each_frame_to_score(gray_frame_list)->np.ndarray:
 
 
 def test():
-    capture = cv.VideoCapture("ultimate_except.mp4")  # read the video file
+    capture = cv.VideoCapture("ultimate_use.mp4")  # read the video file
     while True:
         check = capture.get(cv.CAP_PROP_POS_FRAMES) == capture.get(
             cv.CAP_PROP_FRAME_COUNT)  # current frame == all frame
@@ -60,21 +60,34 @@ def test():
             capture.open("ultimate_use.mp4")
         ret, frame = capture.read()
         frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+
         for k in range(5):
             cv.namedWindow(f'left{k + 1}', cv.WINDOW_NORMAL)
             cv.namedWindow(f'right{k + 1}', cv.WINDOW_NORMAL)
 
-        cv.imshow("left1", frame[155:175, 65:80])
-        cv.imshow("left2", frame[260:275, 65:80])
-        cv.imshow("left3", frame[365:375, 65:80])
-        cv.imshow("left4", frame[465:480, 65:80])
-        cv.imshow("left5", frame[570:585, 65:80])
+        coordinate={"left1" : frame[155:175, 65:80],
+                    "left2" : frame[260:275, 65:80],
+                    "left3" : frame[365:375, 65:80],
+                    "left4" : frame[465:480, 65:80],
+                    "left5" : frame[570:585, 65:80],
+                    "right1" : frame[155:175, 1840:1855],
+                    "right2" : frame[260:275, 1840:1855],
+                    "right3" : frame[365:375, 1840:1855],
+                    "right4" : frame[465:480, 1840:1855],
+                    "right5" : frame[570:585, 1840:1855]}
 
-        cv.imshow("right1", frame[155:175, 1840:1855])
-        cv.imshow("right2", frame[260:275, 1840:1855])
-        cv.imshow("right3", frame[365:375, 1840:1855])
-        cv.imshow("right4", frame[465:480, 1840:1855])
-        cv.imshow("right5", frame[570:585, 1840:1855])
+        cv.imshow("left1", coordinate["left1"])
+        cv.imshow("left2", coordinate["left2"])
+        cv.imshow("left3", coordinate["left3"])
+        cv.imshow("left4", coordinate["left4"])
+        cv.imshow("left5", coordinate["left5"])
+
+        cv.imshow("right1", coordinate["right1"])
+        cv.imshow("right2", coordinate["right2"])
+        cv.imshow("right3", coordinate["right3"])
+        cv.imshow("right4", coordinate["right4"])
+        cv.imshow("right5", coordinate["right5"])
+
         key = cv.waitKey(1)  # analyze 33ms frame
         if key == 27:  # Esc key to stop
             break
