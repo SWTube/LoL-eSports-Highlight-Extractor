@@ -86,31 +86,6 @@ def video_to_list(path: str) -> (list, int):
     return frame_list, frame_count
 
 
-def mean_squared_error(image_one: np.ndarray, image_two: np.ndarray) -> float:
-    """
-    Calculates the 'Mean Squared Error' between the two images,
-    which is the sum of the squared difference between the two images;
-    CAUTION! the two images must have the same dimension.
-
-    Args:
-        image_one: Image to compare.
-        image_two: Original image
-
-    Returns:
-        MSE. Lower the error, the more "similar" the two images are.
-
-    Raises:
-        None
-    """
-    assert isinstance(image_one, np.ndarray)
-    assert isinstance(image_two, np.ndarray)
-
-    error = np.sum((image_one.astype("float") - image_two.astype("float")) ** 2)
-    error /= float(image_one.shape[0] * image_one.shape[1])
-
-    return error
-
-
 # LAC
 def compare_images_1(image_one: np.ndarray, image_two: np.ndarray) -> float:
     """
@@ -187,6 +162,31 @@ def compare_images_2(image_one: np.ndarray, image_two: np.ndarray) -> float:
     a_b_comparison = cv.compareHist(hist_a, hist_b, 0)
 
     return a_b_comparison
+
+
+def compare_images_3(image_one: np.ndarray, image_two: np.ndarray) -> float:
+    """
+    Calculates the 'Mean Squared Error' between the two images,
+    which is the sum of the squared difference between the two images;
+    CAUTION! the two images must have the same dimension.
+
+    Args:
+        image_one: Image to compare.
+        image_two: Original image
+
+    Returns:
+        MSE. Lower the error, the more "similar" the two images are.
+
+    Raises:
+        None
+    """
+    assert isinstance(image_one, np.ndarray)
+    assert isinstance(image_two, np.ndarray)
+
+    error = np.sum((image_one.astype("float") - image_two.astype("float")) ** 2)
+    error /= float(image_one.shape[0] * image_one.shape[1])
+
+    return error
 
 
 def extract_spell_images(frame: np.ndarray, loc: int = 0) -> list:
