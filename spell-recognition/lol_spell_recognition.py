@@ -232,7 +232,7 @@ def extract_spell_images(frame: np.ndarray, loc: int = 0) -> list:
             in_game_spell.append([])
             for x in range(position[loc][1], position[loc][3] + 1):
                 in_game_spell[y - position[loc][0]].append(frame[y][x])
-        in_game_spell = np.array(in_game_spell, dtype="uint8")
+        in_game_spell[0] = np.array(in_game_spell, dtype="uint8")
 
         return in_game_spell
     # If no loc argument is parsed
