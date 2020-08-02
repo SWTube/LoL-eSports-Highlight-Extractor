@@ -11,7 +11,9 @@
 import cv2 as cv
 from matplotlib import pyplot as plt
 import numpy as np
+import pyprind
 from skimage import metrics
+import sys
 
 # Spell Highlight Scores
 g_clarity_score = 0.1
@@ -68,6 +70,8 @@ def video_to_list(path: str) -> (list, int):
         print("frame_rate is invalid.")
         assert False
 
+    print("video_to_list()")
+    bar = pyprind.ProgBar(frame_count, stream=sys.stdout, monitor=True)
     for frame_no in range(frame_count):
         ret, frame = vid.read()
 
@@ -79,7 +83,9 @@ def video_to_list(path: str) -> (list, int):
             frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
             frame_list.append(frame)
         else:
+            bar.update()
             continue
+        bar.update()
 
     vid.release()
 
@@ -104,15 +110,12 @@ def compare_images_1(image_one: np.ndarray, image_two: np.ndarray) -> float:
     assert isinstance(image_one, np.ndarray)
     assert isinstance(image_two, np.ndarray)
 
-    # compute the mean squared error
-    mse_value = mean_squared_error(image_one, image_two)
-
     # compute the structural similarity
     ssim_value = metrics.structural_similarity(image_one, image_two, multichannel=True)
 
-    # setup the figure
+    """# setup the figure
     fig = plt.figure("Image Comparison")
-    plt.suptitle("MSE: %.2f, SSIM: %.2f" % (mse_value, ssim_value))
+    plt.suptitle("SSIM: %.2f" % ssim_value)
 
     # show first image
     axis_img_a = fig.add_subplot(1, 2, 1)
@@ -125,7 +128,7 @@ def compare_images_1(image_one: np.ndarray, image_two: np.ndarray) -> float:
     plt.axis("off")
 
     # show the images
-    plt.show()
+    plt.show()"""
 
     return ssim_value
 
