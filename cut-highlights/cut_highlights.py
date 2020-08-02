@@ -53,7 +53,7 @@ def matching(video_file: str, video_capture: np.ndarray, video_path: str, compar
                 out = cv.VideoWriter(video_file + game_set[game_num] + ".mp4", fourcc, fps, (width, height), 1)
 
             out.write(frame_color)
-            cv.imshow("EditedFrame", frame_color)
+            # cv.imshow("EditedFrame", frame_color)
 
         ret, frame_color = video_capture.read()
         if not ret:
@@ -67,7 +67,7 @@ def matching(video_file: str, video_capture: np.ndarray, video_path: str, compar
         frame_resize = frame_gray[width_start: width_end, height_start: height_end]
 
         # Showing video.
-        cv.imshow("VideoFrame", frame_gray)
+        # cv.imshow("VideoFrame", frame_gray)
 
         if video_capture.get(cv.CAP_PROP_POS_FRAMES) % fps == 0:
             print("start comparing..." + str(video_capture.get(cv.CAP_PROP_POS_FRAMES)))
@@ -75,10 +75,10 @@ def matching(video_file: str, video_capture: np.ndarray, video_path: str, compar
             checker.append([video_capture.get(cv.CAP_PROP_POS_FRAMES), sift_ans])
 
         # Stopping video.
-        if cv.waitKey(1) > 0:
-            break
+        # if cv.waitKey(1) > 0:
+        #     break
 
-    write_txt(checker)
+    # write_txt(checker)
     out.release()
     video_capture.release()
     cv.destroyAllWindows()
@@ -113,9 +113,9 @@ def sift_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> bool:
             good.append([m])
 
     # Showing plt.
-    plt_image = cv.drawMatchesKnn(frame_resize, keypoint_1, compare_image, keypoint_2, good, None, flags=2)
-    plt.imshow(plt_image)
-    plt.show()
+    # plt_image = cv.drawMatchesKnn(frame_resize, keypoint_1, compare_image, keypoint_2, good, None, flags=2)
+    # plt.imshow(plt_image)
+    # plt.show()
 
     if len(good) > 15:
         print("this frame is ingame.")
@@ -128,6 +128,7 @@ def sift_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> bool:
 def write_txt(checker: list) -> None:
     """
         Writing the value that the frame has.
+        Now, it wasn't needed - 2020/08/02
 
         Args:
             checker: This list has current frame number and that's status.
