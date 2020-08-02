@@ -12,7 +12,7 @@ import numpy as np
 import time
 
 
-def CutVideo(capture, temp):
+def cut_video(capture, temp):
     # fps, codec, output
     fps = capture.get(cv.CAP_PROP_FPS)
     fourcc = cv.VideoWriter_fourcc(*"mp4v")
@@ -31,9 +31,10 @@ def CutVideo(capture, temp):
         loc = np.where(res >= 0.4)
 
         if loc[::-1][0].size != 0:  # playing
+            print('writing')
             output.write(frame)
-
-        # print('writing')
+        else:
+            print('not writing')
 
     print('Complete Writing')
 
@@ -51,7 +52,7 @@ def main():
     # Template Image (minimap)
     template = cv.imread("../resources/minimap_templ.png", cv.IMREAD_GRAYSCALE)
 
-    CutVideo(cap, template)
+    cut_video(cap, template)
 
     print('time:', time.time() - start_time)
 
