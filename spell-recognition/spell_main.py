@@ -7,23 +7,24 @@
 # Last Update: July 29, 2020
 #     Purpose: Main file to run spell analysis.
 """
-
-import lol_spell_recognition as lsr
-
 import cv2 as cv
-from matplotlib import pyplot as plt
+import lol_spell_recognition as lsr
+import pyprind
+import sys
 
 
 def main():
     frames = []
     spell_image_data = []
     in_game_spell = []
+    first_frame_spell = []
+    fixed_spell_list = []
     frame_count = 0
     spell_file = ["Barrier.png", "Challenging_Smite.png", "Chilling_Smite.png", "Clarity.png", "Cleanse.png",
                   "Exhaust.png", "Flash.png", "Ghost.png", "Heal.png",
                   "Hexflash.png", "Ignite.png", "Smite.png", "Teleport.png"]
 
-    video_path = "../resources/smite_test.mp4"
+    video_path = "../resources/APK Prince vs SANDBOX Game 1 - LCK 2020 Spring Split W6D5 - APK vs SBG G1.mp4"
     spell_path = "../resources/summoner_spells/"
 
     ## Initialize
@@ -42,12 +43,25 @@ def main():
     # Convert video to list of frames and saves them in *frames* list variable.
     frames, frame_count = lsr.video_to_list(video_path)
 
+    ## First frame analysis
+    # Fix spells - frames[0] -> list[20]
+    first_frame_spell = lsr.extract_spell_images(frames[0])
+
+    bar = pyprind.ProgBar(len(first_frame_spell), stream=sys.stdout)
+    for in_game_spell_image in first_frame_spell:
+        similarity_list = []
+        spell_index = 0
+        for original_spell_image in spell_image_data:
+            similarity_list.append(lsr.compare_images_1(original_spell_image, in_game_spell_image))
+            spell_index = similarity_list.index(max(similarity_list))
+            fixed_spell_list.append(spell_image_data[spell_index])
+        bar.update()
+
     ## Begin frame analysis
-    for frame in frames:
-        # Extract spell images from the frame.
-        in_game_spell = lsr.extract_spell_images(frame, 13)
-        plt.imshow(in_game_spell)
-        plt.show()
+    # for frame in frames:
+    #     # Extract spell images from the frame.
+    #     in_game_spell = lsr.extract_spell_images(frame)
+
     # -- test -- #
     print("-- test --")
 
