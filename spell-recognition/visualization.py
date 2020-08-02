@@ -44,6 +44,7 @@ def save_graph(compare_function: FunctionType, original_spell_image: np.ndarray,
     # Make List of x,y_axis
     for video_frame in video_frames:
         in_game_spell = lsr.extract_spell_images(video_frame, 13)
+        in_game_spell = np.array(in_game_spell[0], dtype="uint8")
         y_axis.append(compare_function(in_game_spell, original_spell_image))
 
     x_axis = list(range(len(video_frames)))
@@ -125,7 +126,7 @@ def main():
     smite_image = cv.cvtColor(smite_image, cv.COLOR_BGR2RGB)
 
     ## Begin frame analysis
-    save_graph(lsr.mean_squared_error, smite_image, frames)
+    save_graph(lsr.compare_images_3, smite_image, frames)
 
 
 if __name__ == '__main__':
