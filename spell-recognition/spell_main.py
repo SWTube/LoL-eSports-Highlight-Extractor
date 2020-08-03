@@ -9,22 +9,24 @@
 """
 import cv2 as cv
 import lol_spell_recognition as lsr
-import pyprind
-import sys
 
 
 def main():
-    frames = []
-    spell_image_data = []
-    in_game_spell = []
     first_frame_spell = []
     fixed_spell_list = []
+    frames = []
+    highlight_score_result = []
+    in_game_spells = []
+    similarity_result = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
+    spell_image_data = []
+
     frame_count = 0
+
     spell_file = ["Barrier.png", "Challenging_Smite.png", "Chilling_Smite.png", "Clarity.png", "Cleanse.png",
                   "Exhaust.png", "Flash.png", "Ghost.png", "Heal.png",
                   "Hexflash.png", "Ignite.png", "Smite.png", "Teleport.png"]
 
-    video_path = "../resources/APK Prince vs SANDBOX Game 1 - LCK 2020 Spring Split W6D5 - APK vs SBG G1.mp4"
+    video_path = "../resources/smite_test.mp4"
     spell_path = "../resources/summoner_spells/"
 
     ## Initialize
@@ -44,37 +46,33 @@ def main():
     frames, frame_count = lsr.video_to_list(video_path)
 
     ## First frame analysis
-    # Fix spells - frames[0] -> list[20]
     first_frame_spell = lsr.extract_spell_images(frames[0])
 
-    bar = pyprind.ProgBar(len(first_frame_spell), stream=sys.stdout)
     for in_game_spell_image in first_frame_spell:
         similarity_list = []
         spell_index = 0
+
+        # Compare in-game spell images to original spells and calculates similarity value for each comparison.
         for original_spell_image in spell_image_data:
-            similarity_list.append(lsr.compare_images_1(original_spell_image, in_game_spell_image))
-            spell_index = similarity_list.index(max(similarity_list))
-            fixed_spell_list.append(spell_image_data[spell_index])
-        bar.update()
+            similarity_list.append(lsr.compare_images_1(in_game_spell_image, original_spell_image))
 
-    ## Begin frame analysis
-    # for frame in frames:
-    #     # Extract spell images from the frame.
-    #     in_game_spell = lsr.extract_spell_images(frame)
+        # Find the image with the highest similarity value.
+        spell_index = similarity_list.index(max(similarity_list))
 
-    # -- test -- #
+        # Append this spell image in fixed_spell_list as np.ndarray data type.
+        fixed_spell_list.append(spell_image_data[spell_index])
+
+    ## Begin video analysis
+    for frame in frames:
+        # Extract spell images from the frame.
+        in_game_spells = lsr.extract_spell_images(frame)
+
+        # Compare and add similarity values into list.
+        for idx in range(len(in_game_spells)):
+            similarity_result[idx].append(lsr.compare_images_1(in_game_spells[idx], fixed_spell_list[idx]))
+
+    ## -- test -- ##
     print("-- test --")
-
-    # idx = 2, 12
-    # images in those indexes are on cooldown.
-
-    # in_game_spell = extract_spell_images(frames[0])
-    #
-    # compare_images_1(in_game_spell[2], spell_image_data[1])
-    # compare_images_1(in_game_spell[12], spell_image_data[1])
-    #
-    # print(compare_images_2(in_game_spell[2], spell_image_data[1]))
-    # print(compare_images_2(in_game_spell[12], spell_image_data[1]))
 
     return None
 
