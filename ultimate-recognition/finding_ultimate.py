@@ -47,6 +47,56 @@ len : 40
 # player 5 [x, y] -> [1847, 572]
 """
 
+
+def video_to_list(path: str) -> (list, int):
+    """
+    Converts a video file to frames and returns a list of them.
+    Args:
+        path: String value of path to video file.
+    Returns:
+        If correct path is given, this function will return a list of frames and the number of frames.
+        If given path is wrong, returns an empty list.
+    Raises:
+        None
+    """
+    assert isinstance(path, str)
+
+    frame_list = []
+    frame_count = 0
+    frame_rate = 0
+    vid = cv.VideoCapture(path)
+
+    # Gets total frame count and the FPS of the video
+    frame_count = int(vid.get(cv.CAP_PROP_FRAME_COUNT))
+    frame_rate = vid.get(cv.CAP_PROP_FPS)
+
+    # This rules out Drop-frame videos
+    # 29.97 fps -> 30 fps
+    if not frame_rate.is_integer():
+        frame_rate = int(frame_rate + 1)
+    elif frame_rate.is_integer():
+        frame_rate = int(frame_rate)
+    else:
+        print("frame_rate is invalid.")
+        assert False
+
+    print("video_to_list()")
+    for frame_no in range(frame_count):
+        ret, frame = vid.read()
+
+        if not ret:
+            break
+
+        # Reads every (FPS) frames to increase analysis speed
+        if frame_no % frame_rate == 0:
+            frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+            frame_list.append(frame)
+
+    vid.release()
+
+    return frame_list, frame_count
+
+
 def draw_circle_on_ultimate(circle_x : int, circle_y : int) -> None:
     """
     Draw circle on ultimate skill to get ultimate skill's coordinate
@@ -158,7 +208,7 @@ def main() -> None:
     #draw_rectangle_on_champion(1847, 160)
 
     champion_icon_data = []
-    ultimate_skills_data = []
+    champion_name = []
 
     in_game_champion_icon = []
     in_game_ultimate_skills = []
@@ -187,7 +237,14 @@ def main() -> None:
         champion_icon_data[index] = cv.resize(champion_icon_data[index], (40, 40))
 
     # Get best match index list
-    champion_index = compare_champion_icon_with_champion_icon_data(champion_image_path, test_image, champion_icon_files)
+    in_game_champion_icon = compare_champion_icon_with_champion_icon_data(champion_image_path,
+                                                                   test_image, champion_icon_files)
+
+    # Get champion name using champion index
+    for champion_index in in_game_champion_icon:
+        champion_name.append(champion_icon_files[champion_index][:-4])
+    for index in range(len(champion_name)):
+        print(champion_name[index])
 
 if __name__ == "__main__":
     main()
