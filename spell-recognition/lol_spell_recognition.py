@@ -70,8 +70,6 @@ def video_to_list(path: str) -> (list, int):
         print("frame_rate is invalid.")
         assert False
 
-    print("video_to_list()")
-    bar = pyprind.ProgBar(frame_count, stream=sys.stdout, monitor=True)
     for frame_no in range(frame_count):
         ret, frame = vid.read()
 
@@ -83,9 +81,7 @@ def video_to_list(path: str) -> (list, int):
             frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
             frame_list.append(frame)
         else:
-            bar.update()
             continue
-        bar.update()
 
     vid.release()
 
@@ -112,23 +108,6 @@ def compare_images_1(image_one: np.ndarray, image_two: np.ndarray) -> float:
 
     # compute the structural similarity
     ssim_value = metrics.structural_similarity(image_one, image_two, multichannel=True)
-
-    """# setup the figure
-    fig = plt.figure("Image Comparison")
-    plt.suptitle("SSIM: %.2f" % ssim_value)
-
-    # show first image
-    axis_img_a = fig.add_subplot(1, 2, 1)
-    plt.imshow(image_one, cmap=plt.cm.gray)
-    plt.axis("off")
-
-    # show the second image
-    axis_img_b = fig.add_subplot(1, 2, 2)
-    plt.imshow(image_two, cmap=plt.cm.gray)
-    plt.axis("off")
-
-    # show the images
-    plt.show()"""
 
     return ssim_value
 
