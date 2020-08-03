@@ -9,6 +9,7 @@
 """
 import cv2 as cv
 import lol_spell_recognition as lsr
+import visualization as vs
 
 
 def main():
