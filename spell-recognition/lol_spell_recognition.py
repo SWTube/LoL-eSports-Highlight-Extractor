@@ -10,11 +10,8 @@
 """
 import csv
 import cv2 as cv
-from matplotlib import pyplot as plt
 import numpy as np
-import pyprind
 from skimage import metrics
-import sys
 
 # Spell Highlight Scores
 g_clarity_score = 0.1
