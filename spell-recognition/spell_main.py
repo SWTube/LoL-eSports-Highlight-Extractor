@@ -28,7 +28,7 @@ def main():
                   "Exhaust.png", "Flash.png", "Ghost.png", "Heal.png",
                   "Hexflash.png", "Ignite.png", "Smite.png", "Teleport.png"]
 
-    video_path = "../resources/test_video_one_minute.mp4"
+    video_path = "../resources/full_game.mp4"
     spell_path = "../resources/summoner_spells/"
 
     ## Initialize
