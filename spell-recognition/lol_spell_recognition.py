@@ -8,6 +8,7 @@
 #     Purpose: Functions that recognizes the cooltime of summoner spells
                and uses this data to calculate highlight score of the game.
 """
+import csv
 import cv2 as cv
 from matplotlib import pyplot as plt
 import numpy as np
@@ -52,16 +53,16 @@ def video_to_list(path: str) -> (list, int):
     assert isinstance(path, str)
 
     frame_list = []
-    frame_count = 0
+    total_frame_count = 0
     frame_rate = 0
     vid = cv.VideoCapture(path)
 
     # Gets total frame count and the FPS of the video
-    frame_count = int(vid.get(cv.CAP_PROP_FRAME_COUNT))
+    total_frame_count = int(vid.get(cv.CAP_PROP_FRAME_COUNT))
     frame_rate = vid.get(cv.CAP_PROP_FPS)
 
     # This rules out Drop-frame videos
-    # 29.97 fps -> 30 fps
+    # ex) 29.97 fps -> 30 fps
     if not frame_rate.is_integer():
         frame_rate = int(frame_rate + 1)
     elif frame_rate.is_integer():
@@ -70,9 +71,11 @@ def video_to_list(path: str) -> (list, int):
         print("frame_rate is invalid.")
         assert False
 
-    print("video_to_list()")
-    bar = pyprind.ProgBar(frame_count, stream=sys.stdout, monitor=True)
-    for frame_no in range(frame_count):
+    print("-- Converting Video --")
+    for frame_no in range(total_frame_count):
+        print(end='\r')
+        print("Processing... {}%".format(round(frame_no * 100 / total_frame_count, 2)), end='')
+
         ret, frame = vid.read()
 
         if not ret:
@@ -83,16 +86,14 @@ def video_to_list(path: str) -> (list, int):
             frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
             frame_list.append(frame)
         else:
-            bar.update()
             continue
-        bar.update()
 
+    print()
     vid.release()
 
-    return frame_list, frame_count
+    return frame_list, total_frame_count
 
 
-# LAC
 def compare_images_1(image_one: np.ndarray, image_two: np.ndarray) -> float:
     """
     Calculates the similarity of the two images.
@@ -113,27 +114,12 @@ def compare_images_1(image_one: np.ndarray, image_two: np.ndarray) -> float:
     # compute the structural similarity
     ssim_value = metrics.structural_similarity(image_one, image_two, multichannel=True)
 
-    """# setup the figure
-    fig = plt.figure("Image Comparison")
-    plt.suptitle("SSIM: %.2f" % ssim_value)
-
-    # show first image
-    axis_img_a = fig.add_subplot(1, 2, 1)
-    plt.imshow(image_one, cmap=plt.cm.gray)
-    plt.axis("off")
-
-    # show the second image
-    axis_img_b = fig.add_subplot(1, 2, 2)
-    plt.imshow(image_two, cmap=plt.cm.gray)
-    plt.axis("off")
-
-    # show the images
-    plt.show()"""
+    # convert ssim_value data type from np.float64 to float
+    ssim_value = float(ssim_value)
 
     return ssim_value
 
 
-# LJH
 def compare_images_2(image_one: np.ndarray, image_two: np.ndarray) -> float:
     """
     Compare two images through histogram
@@ -252,6 +238,35 @@ def extract_spell_images(frame: np.ndarray, loc: int = 0) -> list:
     else:
         print("Invalid argument parsed into extract_spell_images() function.")
         assert False
+
+
+def save_result_as_csv(similarity: list) -> None:
+    """
+    Save similarity_list as csv file.
+
+    Args:
+        similarity: Result list containing all similarity values.
+
+    Raises:
+        None
+    """
+    extension = ".csv"
+
+    filename = ["left_summoner_1_D_spell", "left_summoner_1_F_spell", "left_summoner_2_D_spell",
+                "left_summoner_2_F_spell", "left_summoner_3_D_spell", "left_summoner_3_F_spell",
+                "left_summoner_4_D_spell", "left_summoner_4_F_spell", "left_summoner_5_D_spell",
+                "left_summoner_5_F_spell", "right_summoner_1_D_spell", "right_summoner_1_F_spell",
+                "right_summoner_2_D_spell", "right_summoner_2_F_spell", "right_summoner_3_D_spell",
+                "right_summoner_3_F_spell", "right_summoner_4_D_spell", "right_summoner_4_F_spell",
+                "right_summoner_5_D_spell", "right_summoner_5_F_spell"]
+
+    for idx in range(len(filename)):
+        path = "../result/similarity/" + filename[idx] + extension
+        with open(path, 'w', newline='') as file:
+            csv_writer = csv.writer(file)
+            csv_writer.writerow(similarity[idx])
+
+    return None
 
 
 def main():
