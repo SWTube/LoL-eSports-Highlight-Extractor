@@ -15,15 +15,12 @@ from matplotlib import pyplot as plt
 def check_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> int:
     """
         Comparing video's capture to replay banner image to use sift algorithm
-
         Args:
-            capture_image: Resized frame for compare
+            frame_resize: Resized frame for compare
             compare_image: Image file for comparison
-
         Returns:
             If list name of good has more than 30 values, return 1 (It means this frame is replay)
             If not, returns 0 (It means this frame is in-game)
-
         Raises:
             N/A
     """
@@ -54,14 +51,10 @@ def check_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> int:
 def checklist_writer(compare_result:list) -> list:
     """
         Write check file consisting of results comparing video's capture to replay banner image
-
         Args:
-            frmae_list: list of video's capture
-            compare_image: Image file for comparison
-
+            compare_result: list of result of compare
         Returns:
             None
-
         Raises:
             N/A
     """
@@ -79,20 +72,17 @@ def checklist_writer(compare_result:list) -> list:
 def provider(video_path: str) -> np.ndarray:
     """
         Extracting video's capture for comparison
-
         Args:
             video_path: Path of video to extract
-
         Returns:
             frame_list: list consisting of video's frames
-
         Raises:
             N/A
     """
     frame_list = []
     video_capture = cv.VideoCapture(video_path)
 
-    fps = video_capture.get(cv.CAP_PROP_POS_FRAMES)
+    fps = video_capture.get(cv.CAP_PROP_FPS)
     width = video_capture.get(cv.CAP_PROP_FRAME_WIDTH)
     height = video_capture.get(cv.CAP_PROP_FRAME_HEIGHT)
 
@@ -128,10 +118,9 @@ def provider(video_path: str) -> np.ndarray:
 def get_result(frame_list: list, compare_image: np.ndarray) -> list:
     """
         Making a list consisting of results of check_algorithm
-
         Args:
             frame_list: list consisting of video's frames
-            compared_image: Image file for comparison
+            compare_image: Image file for comparison
         Returns:
             compare_list: list consisting of results of check_algorithm
         Raises:
@@ -148,15 +137,12 @@ def get_result(frame_list: list, compare_image: np.ndarray) -> list:
 def store_video(video_name:str, video_path:str, compare_result:list) -> None:
     """
         Storing in-game video
-
         Args:
              video_path:Video's path to be stored
              compare_result: Results of check_algorithm
              video_name: File name of video
-
         Returns:
             None
-
         Raises:
             N/A
     """
@@ -186,7 +172,6 @@ def store_video(video_name:str, video_path:str, compare_result:list) -> None:
             if compare_result[play_time] == 1:
                 check = False
                 play_time = play_time + 1
-
             else:
                 check = True
                 play_time = play_time + 1
