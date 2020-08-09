@@ -1,47 +1,66 @@
 import numpy as np
-import find_region_of_interest
-def give_frame_point(frame_point_list:list)->list:
-    """첫번째 frame은 궁극기 표준을 저장함. -> 꺼져있는 것.
-    어두울수록 가까운 곳에 점수를 준다.
-    궁극기 쿨타임이 길수록 많이준다.
-    return:
-    standard_frame,    compare_frame2...
-    [{left1:s_point    {left1:point-s_point #작을수록 궁쓴지 얼마 안 되었다는 것.
-      left2:s_point     left2:point-s_point
-      left3:s_point},   left3:point-s_point}]
+import find_region_of_interest as froi
+import cv2 as cv
 
+path = "raw3.mp4"
+initial_frame = 20000
+start_frame = froi.call_frame(path,initial_frame)
+standard_skill_list = froi.cut_image(start_frame)
+
+
+def analize_diffence(standard_skill_image,compare_skill_image):
     """
-    standard = frame_point_list[0] #궁극기가 꺼져있을 때.
-    for compare_frame in frame_point_list[1:]:
-        return None
-
-def give_darkness_piont(ultimate_frame_list:list)->list:
-    """궁극기 frame의 darkness를 측정해서 점수로 바꿈
-    각 frame의 어두운 정도를 dictionary 값에 반환함.
-    (20,15)짜리 ndarray가 들어있는 dictionary list
-    return:
-    ex)
-    index_frame1,   index_frame2...
-    [{left1:point   {left1:point
-      left2:point    left2:point
-      left3:point},  left3:point}]
+    15*20 skill image를 비교하는 함수, 2차원 ndarray
+    :return:
     """
-    result_list=[]
-    for each_frame in ultimate_frame_list:
-        for k in range(1,6):
-            print(k)
-            each_frame['left{0}'.format(k)] = each_frame['left{0}'.format(k)].sum()
-            each_frame['right{0}'.format(k)] = each_frame['right{0}'.format(k)].sum()
-        result_list.append(each_frame)
-    return result_list
+    difference = int(np.sum(compare_skill_image)) - int(np.sum(standard_skill_image))
+    return difference
 
-def main():
-    test = np.arange(300)
-    test = test.reshape(20, 15)
-    value = test
-    tst = {num: value
-           for num in ['left1', 'left2', 'left3', 'left4', 'left5', 'right1', 'right2', 'right3', 'right4', 'right5']}
-    print(give_darkness_piont([tst]))
+
+def make_diffence_list(compare_list):
+    difference_list = []
+    for champion_index in range(10):
+        difference = analize_diffence(standard_skill_list[champion_index], compare_list[champion_index])
+        difference_list.append(difference)
+    difference_list = np.array(difference_list)
+    return difference_list
+
+
+def in_game_similarity(initial,interval)->np.ndarray: # 비동기적 처리 방식이 필요함.
+    start = time.time()
+    analize_data = np.empty(10)
+    frame_number = 0
+    while cap.get(cv.CAP_PROP_FRAME_COUNT)-interval > initial+frame_number*interval:
+        print((initial+frame_number*interval)/(cap.get(cv.CAP_PROP_FRAME_COUNT)-interval)*100,"% 수행했습니다.")
+        frame_number += 1
+        compare_frame = froi.call_frame(path,initial+frame_number*interval)
+        compare_skill_list = froi.cut_image(compare_frame)
+        frame_similarity = gh.make_diffence_list(compare_skill_list)
+        analize_data = np.vstack([analize_data,frame_similarity])
+    print("time :", time.time() - start)
+    return analize_data
+
+
+def nomalize(vector):
+    norm = np.linalg.norm(vector)
+    if norm == 0:
+        return vector
+    return vector / norm
+
+
+def ultimate_use_frame(skill_data_vector,threshold):
+    skill_use_frame=[]
+    for frame_index in range(len(skill_data_vector)-1):
+        if skill_data_vector[frame_index]<threshold:
+            continue
+        else:
+            if -threshold<skill_data_vector[frame_index+1]<threshold:
+                skill_use_frame.append(frame_index)
+    return skill_use_frame
+
 
 if __name__ == '__main__':
-    main()
+    standard_skill_list_test = froi.cut_image_test(start_frame)
+    compare_frame = froi.call_frame(path, 40000)
+    compare_skill_list = froi.cut_image_test(compare_frame)
+    print(make_diffence_list(compare_skill_list))
