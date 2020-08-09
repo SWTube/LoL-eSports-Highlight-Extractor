@@ -2,7 +2,7 @@
 #      Team: standardization
 # Programmer: wpdudH
 # Start Date: 07/15/20
-#Last Update: July 27, 2020
+#Last Update: August 9, 2020
 #    Purpose: Raw video consists of in-game videos and replay videos.
 #             So we need to distinguish between in-game videos and replay videos.
 #             This program carries out that work.
@@ -48,7 +48,7 @@ def check_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> int:
     else:
         return 0
 
-def checklist_writer(compare_result:list) -> list:
+def checklist_writer(compare_result:list) -> None:
     """
         Write check file consisting of results comparing video's capture to replay banner image
         Args:
@@ -69,22 +69,17 @@ def checklist_writer(compare_result:list) -> list:
             file.writelines(text+'\n')
     # Write csv file consisting of values of list named classified
 
-def provider(video_path: str) -> np.ndarray:
+def frame_resize(frame: np.ndarray) -> np.ndarray:
     """
-        Extracting video's capture for comparison
+        Resize frame to be compared
         Args:
-            video_path: Path of video to extract
+            frame: Frame of video
         Returns:
-            frame_list: list consisting of video's frames
+            frame_resize: Resized frame
         Raises:
             N/A
     """
-    frame_list = []
-    video_capture = cv.VideoCapture(video_path)
-
-    fps = video_capture.get(cv.CAP_PROP_FPS)
-    width = video_capture.get(cv.CAP_PROP_FRAME_WIDTH)
-    height = video_capture.get(cv.CAP_PROP_FRAME_HEIGHT)
+    height, width, channel = frame.shape
 
     start_height = round(45 / 1080 * height)
     end_width = round(254 / 1920 * width)
@@ -92,60 +87,24 @@ def provider(video_path: str) -> np.ndarray:
     # upper_left_banner start point : (0,45)
     # upper_left_banner end point : (254,122)
 
-    while True:
-        ret, frame = video_capture.read()
+    frame_resize = frame[start_height:end_height, 0:end_width]
+    # resizing frame to reduce the computation
 
-        if not ret:
-            print("Error")
-            break
+    return frame_resize
 
-        frame_resize = frame[start_height:end_height, 0:end_width]
-        # resizing frame to reduce the computation
-
-        if video_capture.get(cv.CAP_PROP_POS_FRAMES) % fps == 0:
-            frame_list.append(frame_resize)
-        # Save resized frame to frame_list every second
-
-        if video_capture.get(cv.CAP_PROP_POS_FRAMES) == video_capture.get(cv.CAP_PROP_FRAME_COUNT):
-            break
-        # Finish loop
-
-    video_capture.release()
-    cv.destroyAllWindows()
-
-    return frame_list
-
-def get_result(frame_list: list, compare_image: np.ndarray) -> list:
-    """
-        Making a list consisting of results of check_algorithm
-        Args:
-            frame_list: list consisting of video's frames
-            compare_image: Image file for comparison
-        Returns:
-            compare_list: list consisting of results of check_algorithm
-        Raises:
-            N/A
-    """
-    compare_result = []
-
-    for i in range(len(frame_list)):
-        compare_result.append(check_algorithm(frame_list[i], compare_image))
-    # Save results of check_algorithm in compare_result
-
-    return compare_result
-
-def store_video(video_name:str, video_path:str, compare_result:list) -> None:
+def store_video(video_name:str, video_path:str, compare_image: np.ndarray ) -> None:
     """
         Storing in-game video
         Args:
              video_path:Video's path to be stored
-             compare_result: Results of check_algorithm
+             compare_image: Image comparing with frame
              video_name: File name of video
         Returns:
             None
         Raises:
             N/A
     """
+    compare_result = []
     video_capture = cv.VideoCapture(video_path)
 
     fps = video_capture.get(cv.CAP_PROP_FPS)
@@ -155,11 +114,11 @@ def store_video(video_name:str, video_path:str, compare_result:list) -> None:
     fourcc = cv.VideoWriter_fourcc(*"mp4v")
     output_video = cv.VideoWriter(video_name+".mp4", fourcc, fps, (int(width), int(height)))
 
-    play_time = 0
-    # To determine whether this frame is replay or not
     check = False
     # If check is True, start storing frame
     # If check is False, stop storing frame
+
+    print("here")
 
     while True:
         ret, frame = video_capture.read()
@@ -168,16 +127,21 @@ def store_video(video_name:str, video_path:str, compare_result:list) -> None:
             print("There is no frame.Check the video file")
             break
 
-        if video_capture.get(cv.CAP_PROP_POS_FRAMES) % fps == 0: # Check frame every second
-            if compare_result[play_time] == 1:
+        if video_capture.get(cv.CAP_PROP_POS_FRAMES) % int(fps) == 0: # Check frame every second
+            if check_algorithm(frame_resize(frame), compare_image) == 1:
+                compare_result.append('1')
                 check = False
-                play_time = play_time + 1
+                print("replay")
             else:
+                compare_result.append('0')
                 check = True
-                play_time = play_time + 1
+                print("ingame")
 
         if check == True:
             output_video.write(frame)
+            cv.imshow("output", frame)
+
+            if cv.waitKey(1) > 0: break
 
         if video_capture.get(cv.CAP_PROP_POS_FRAMES) == video_capture.get(cv.CAP_PROP_FRAME_COUNT):
             break
@@ -185,15 +149,13 @@ def store_video(video_name:str, video_path:str, compare_result:list) -> None:
     video_capture.release()
     cv.destroyAllWindows()
 
+    checklist_writer(compare_result)
+
 def main() -> None:
     replay_banner = cv.imread("C:/Users/82102/PycharmProjects/LoL-eSports-Highlight-Extractor/resources/replay_banner.png", cv.IMREAD_GRAYSCALE)
     video_path = "C:/Users/82102/Downloads/video/FULL_LCKSpring2020_APKvsAF_W7D2_G1.mp4"
 
-    frame_list = provider(video_path)
-    compare_list = get_result(frame_list, replay_banner)
-
-    checklist_writer(compare_list)
-    store_video("FULL_LCKSpring2020_APKvsAF_W7D2_G1", video_path, compare_list)
+    store_video("FULL_LCKSpring2020_APKvsAF_W7D2_G1", video_path, replay_banner)
 
 
 if __name__ == '__main__':
