@@ -5,11 +5,29 @@ path = "raw3.mp4"
 
 
 def convert_window_freestyle(name: str) -> None:
+    """
+    to visualize, make window flexible
+    :param
+        name: window's name
+    :return
+        None
+    """
     cv.namedWindow(name, cv.WINDOW_NORMAL)
     return None
 
 
 def call_frame(path: str, frame_number: int) -> np.ndarray:
+    """
+    call image which frame number indicate
+    :param
+        path: video path
+        frame_number: the number of frame.
+    :var
+        ret: if image is exist return True, if image isn't exist return False
+        frame: gray image data, 2D array
+    :return
+        2D array gray image, which indicate frame number's image
+    """
     cap = cv.VideoCapture(path)
     cap.set(cv.CAP_PROP_POS_FRAMES, frame_number)
     ret, frame = cap.read()
@@ -19,7 +37,10 @@ def call_frame(path: str, frame_number: int) -> np.ndarray:
     return frame
 
 
-def call_frame_test(path,frame_number):
+def call_frame_test(path: str, frame_number: int):
+    """
+    test version of call_frame function. this function show what call_frame do
+    """
     cap = cv.VideoCapture(path)
     cap.set(cv.CAP_PROP_POS_FRAMES, frame_number)
     ret, frame = cap.read()
@@ -35,7 +56,14 @@ def call_frame_test(path,frame_number):
     return frame
 
 
-def cut_image(image):
+def cut_image(image: np.ndarray) -> list:
+    """
+    cut 2D array image data, and return only ultimate skill region.
+    :param:
+        image: gray image, 2D array
+    :return:
+        return list, which contain 10 champion's skill image data.
+    """
     left1 = image[155:175, 65:80]
     left2 = image[265:275, 65:80]
     left3 = image[365:375, 65:80]
@@ -51,7 +79,10 @@ def cut_image(image):
     return result
 
 
-def cut_image_test(image):
+def cut_image_test(image: np.ndarray) -> list:
+    """
+    test version of cut_image function. this function show what cut_image function do
+    """
     left1 = image[155:175, 65:80]
     left2 = image[265:275, 65:80]
     left3 = image[365:375, 65:80]
