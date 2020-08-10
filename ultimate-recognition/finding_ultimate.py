@@ -3,7 +3,7 @@
 #        Team: visual recognition 2
 #  Programmer: SW0000J
 #  Start Date: 07/08/20
-# Last Update: July 27, 2020
+# Last Update: August 10, 2020
 #     Purpose: to find ultimate skill
 """
 
@@ -199,13 +199,13 @@ def compare_champion_icon_with_champion_icon_data(champion_image_path : str, tes
         best_matched_index.append(matched_list.index(max(matched_list)))
 
     return best_matched_index
-    #img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2, good, None, flags=2)
-    #plt.imshow(img3), plt.show()
+    # img3 = cv.drawMatchesKnn(img1, kp1, img2, kp2, good, None, flags=2)
+    # plt.imshow(img3), plt.show()
 
 
 def main() -> None:
-    #draw_circle_on_ultimate(1847, 165)
-    #draw_rectangle_on_champion(1847, 160)
+    # draw_circle_on_ultimate(1847, 165)
+    # draw_rectangle_on_champion(1847, 160)
 
     champion_icon_data = []
     champion_name = []
@@ -245,6 +245,7 @@ def main() -> None:
         champion_name.append(champion_icon_files[champion_index][:-4])
     for index in range(len(champion_name)):
         print(champion_name[index])
+
 
 if __name__ == "__main__":
     main()
