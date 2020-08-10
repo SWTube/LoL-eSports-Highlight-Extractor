@@ -3,7 +3,7 @@
 #        Team: standardization
 #  Programmer: tjswodud
 #  Start Date: 07/07/20
-# Last Update: August 03, 2020
+# Last Update: August 10, 2020
 #     Purpose: Determine the game is (Playing) or (not Playing) and cut Full Video when in_game
 """
 
@@ -14,31 +14,35 @@ import time
 
 def cut_video(capture, temp):
     # fps, codec, output
-    fps = capture.get(cv.CAP_PROP_FPS)
-    new_fps = round(fps)
-    fps_frame = 60
+    fps = int(capture.get(cv.CAP_PROP_FPS))
     total_frame_count = int(capture.get(cv.CAP_PROP_FRAME_COUNT))
     fourcc = cv.VideoWriter_fourcc(*"mp4v")
+    output = cv.VideoWriter("D:/results/output.mp4", fourcc, fps, (1920, 1080), 1)
     is_ingame = False
 
+    frame_number = 0
+    capture.set(cv.CAP_PROP_POS_FRAMES, frame_number)
+    success, frame = capture.read()
+
     # Playing Video, writing output
-    while capture.isOpened():
-        ret, frame = capture.read()
-        if not ret:
-            break
+    while success and frame_number <= total_frame_count:
+        frame_number += fps
+        capture.set(cv.CAP_PROP_POS_FRAMES, frame_number)
+        success, frame = capture.read()
 
         current_frame = int(capture.get(cv.CAP_PROP_POS_FRAMES))
         percentage = int(round(current_frame / total_frame_count, 2) * 100)
+        exe_time_seconds = int((total_frame_count - current_frame) / fps)
+        minute = int(exe_time_seconds / 60)
+        second = exe_time_seconds % 60
 
-        gray_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        width_end, height_end = gray_frame.shape # 1080, 1920
-        width_start = round(266 / 1080 * width_end) # 266
-        height_start = round(289 / 1920 * height_end) # 289
+        if current_frame % fps == 0:
+            gray_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+            width_end, height_end = gray_frame.shape  # 1080, 1920
+            width_start = round(266 / 1080 * width_end)  # 266
+            height_start = round(289 / 1920 * height_end)  # 289
 
-        frame_resize = gray_frame[width_start: width_end, height_start: height_end]
-
-        if current_frame % fps_frame == 0:
-            print("{}/{} - {}%".format(current_frame, total_frame_count, percentage))
+            frame_resize = gray_frame[width_start: width_end, height_start: height_end]
 
             # template matching
             res = cv.matchTemplate(frame_resize, temp, cv.TM_CCOEFF_NORMED)
@@ -46,11 +50,14 @@ def cut_video(capture, temp):
 
             if loc[::-1][0].size != 0:  # playing
                 is_ingame = True
+                print("[writing] {}/{} - {}%, rest {} min {} s.".format(current_frame, total_frame_count, percentage,
+                                                                        minute, second))
             else:
                 is_ingame = False
+                print("[not writing] {}/{} - {}%, rest {} min {} s.".format(current_frame, total_frame_count, percentage,
+                                                                          minute, second))
 
         if is_ingame:
-            output = cv.VideoWriter("../results/output_4" + ".mp4", fourcc, fps, (1920, 1080), 1)
             output.write(frame)
         else:
             continue
