@@ -9,7 +9,7 @@ def convert_window_freestyle(name: str) -> None:
     return None
 
 
-def call_frame(path: str,frame_number: int) -> np.ndarray:
+def call_frame(path: str, frame_number: int) -> np.ndarray:
     cap = cv.VideoCapture(path)
     cap.set(cv.CAP_PROP_POS_FRAMES, frame_number)
     ret, frame = cap.read()
