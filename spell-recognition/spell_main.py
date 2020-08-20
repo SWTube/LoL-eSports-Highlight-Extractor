@@ -3,8 +3,9 @@
 #        Team: visual recognition 2
 #  Programmer: littlecsi
                bluehyena
+               ssw03270
 #  Start Date: 07/29/20
-# Last Update: July 29, 2020
+# Last Update: August 20, 2020
 #     Purpose: Main file to run spell analysis.
 """
 import lol_spell_recognition as lsr
@@ -59,7 +60,7 @@ def main():
 
         # Compare in-game spell images to original spells and calculates similarity value for each comparison.
         for original_spell_image in spell_image_data:
-            similarity_list.append(lsr.compare_images_3(in_game_spell_image, original_spell_image))
+            similarity_list.append(lsr.compare_images(in_game_spell_image, original_spell_image))
 
         # Find the image with the highest similarity value.
         spell_index = similarity_list.index(max(similarity_list))
@@ -71,21 +72,21 @@ def main():
     del spell_index
 
     ## Begin video analysis
-    frame_no = 1
+    frame_num = 1
 
     print("-- Analysing Video --")
     for frame in frames:
         print(end='\r')
-        print("Processing... {}%".format(round(frame_no * 100 / len(frames), 2)), end='')
+        print("Processing... {}%".format(round(frame_num * 100 / len(frames), 2)), end='')
 
         # Extract spell images from the frame.
         in_game_spells = lsr.extract_spell_images(frame)
 
         # Compare and add similarity values into list.
         for idx in range(len(in_game_spells)):
-            similarity_result[idx].append(lsr.compare_images_3(in_game_spells[idx], fixed_spell_list[idx]))
+            similarity_result[idx].append(lsr.compare_images(in_game_spells[idx], fixed_spell_list[idx]))
 
-        frame_no += 1
+        frame_num += 1
 
     del in_game_spells
     print()
