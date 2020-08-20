@@ -91,7 +91,7 @@ def video_to_list(path: str) -> (list, int):
     return frame_list, total_frame_count
 
 
-def compare_images_1(image_one: np.ndarray, image_two: np.ndarray) -> float:
+def compare_images(image_one: np.ndarray, image_two: np.ndarray) -> float:
     """
     Calculates the similarity of the two images.
 
@@ -117,62 +117,62 @@ def compare_images_1(image_one: np.ndarray, image_two: np.ndarray) -> float:
     return ssim_value
 
 
-def compare_images_2(image_one: np.ndarray, image_two: np.ndarray) -> float:
-    """
-    Compare two images through histogram
-
-    Args:
-        image_one: image in video
-        image_two: original image
-
-    Returns:
-        Similarity between two images
-
-    Raises:
-        None
-    """
-    assert isinstance(image_one, np.ndarray)
-    assert isinstance(image_two, np.ndarray)
-
-    # Convert to hsv
-    hsv_a = cv.cvtColor(image_one, cv.COLOR_BGR2HSV)
-    hsv_b = cv.cvtColor(image_two, cv.COLOR_BGR2HSV)
-
-    # Calculate and Normalize histogram
-    hist_a = cv.calcHist([hsv_a], [0], None, [256], [0, 256])
-    cv.normalize(hist_a, hist_a, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
-    hist_b = cv.calcHist([hsv_b], [0], None, [256], [0, 256])
-    cv.normalize(hist_b, hist_b, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
-
-    # Compare hist_a, hist_b
-    a_b_comparison = cv.compareHist(hist_a, hist_b, 0)
-
-    return a_b_comparison
-
-
-def compare_images_3(image_one: np.ndarray, image_two: np.ndarray) -> float:
-    """
-    Calculates the 'Mean Squared Error' between the two images,
-    which is the sum of the squared difference between the two images;
-    CAUTION! the two images must have the same dimension.
-
-    Args:
-        image_one: Image to compare.
-        image_two: Original image
-
-    Returns:
-        MSE. Lower the error, the more "similar" the two images are.
-
-    Raises:
-        None
-    """
-    assert isinstance(image_one, np.ndarray)
-    assert isinstance(image_two, np.ndarray)
-
-    error = np.sum((image_one.astype("float") - image_two.astype("float")) ** 2)
-    error /= float(image_one.shape[0] * image_one.shape[1])
-
-    return error
+# def compare_images_2(image_one: np.ndarray, image_two: np.ndarray) -> float:
+#     """
+#     Compare two images through histogram
+#
+#     Args:
+#         image_one: image in video
+#         image_two: original image
+#
+#     Returns:
+#         Similarity between two images
+#
+#     Raises:
+#         None
+#     """
+#     assert isinstance(image_one, np.ndarray)
+#     assert isinstance(image_two, np.ndarray)
+#
+#     # Convert to hsv
+#     hsv_a = cv.cvtColor(image_one, cv.COLOR_BGR2HSV)
+#     hsv_b = cv.cvtColor(image_two, cv.COLOR_BGR2HSV)
+#
+#     # Calculate and Normalize histogram
+#     hist_a = cv.calcHist([hsv_a], [0], None, [256], [0, 256])
+#     cv.normalize(hist_a, hist_a, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
+#     hist_b = cv.calcHist([hsv_b], [0], None, [256], [0, 256])
+#     cv.normalize(hist_b, hist_b, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
+#
+#     # Compare hist_a, hist_b
+#     a_b_comparison = cv.compareHist(hist_a, hist_b, 0)
+#
+#     return a_b_comparison
+#
+#
+# def compare_images_3(image_one: np.ndarray, image_two: np.ndarray) -> float:
+#     """
+#     Calculates the 'Mean Squared Error' between the two images,
+#     which is the sum of the squared difference between the two images;
+#     CAUTION! the two images must have the same dimension.
+#
+#     Args:
+#         image_one: Image to compare.
+#         image_two: Original image
+#
+#     Returns:
+#         MSE. Lower the error, the more "similar" the two images are.
+#
+#     Raises:
+#         None
+#     """
+#     assert isinstance(image_one, np.ndarray)
+#     assert isinstance(image_two, np.ndarray)
+#
+#     error = np.sum((image_one.astype("float") - image_two.astype("float")) ** 2)
+#     error /= float(image_one.shape[0] * image_one.shape[1])
+#
+#     return error
 
 
 def extract_spell_images(frame: np.ndarray, loc: int = 0) -> list:
