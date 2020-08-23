@@ -12,24 +12,24 @@ initial_frame = 14400 # after 4 minute
 path = "raw3_cuted.mp4"
 # threshold 하고, standard 를 전역변수로 설정하면 다른 모듈에서 쓸 때 import 해야하나? 아니면 그냥 지역변수로 설정하는 것이 좋을까?
 cap = cv.VideoCapture(path)
-total_frame = cap.get(cv.CAP_PROP_FRAME_COUNT)
-analize_frame = (total_frame - initial_frame) / interval_frame
-threshold = math.sqrt(1/analize_frame)
+total_frame = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
+analyze_frame = (total_frame - initial_frame) / interval_frame
+threshold = math.sqrt(1/analyze_frame)
 cap = cv.VideoCapture(path)
 
+skill_similarity_matrix = gh.in_game_similarity(initial_frame, interval_frame)
 
-skill_simularity_metrix = gh.in_game_similarity(initial_frame, interval_frame)
 
-left1 = skill_simularity_metrix[:, 0]
-left2 = skill_simularity_metrix[:, 1]
-left3 = skill_simularity_metrix[:, 2]
-left4 = skill_simularity_metrix[:, 3]
-left5 = skill_simularity_metrix[:, 4]
-right1 = skill_simularity_metrix[:, 5]
-right2 = skill_simularity_metrix[:, 6]
-right3 = skill_simularity_metrix[:, 7]
-right4 = skill_simularity_metrix[:, 8]
-right5 = skill_simularity_metrix[:, 9]
+left1 = skill_similarity_matrix[:, 0]
+left2 = skill_similarity_matrix[:, 1]
+left3 = skill_similarity_matrix[:, 2]
+left4 = skill_similarity_matrix[:, 3]
+left5 = skill_similarity_matrix[:, 4]
+right1 = skill_similarity_matrix[:, 5]
+right2 = skill_similarity_matrix[:, 6]
+right3 = skill_similarity_matrix[:, 7]
+right4 = skill_similarity_matrix[:, 8]
+right5 = skill_similarity_matrix[:, 9]
 
 
 normal_left1 = gh.normalize(left1)
@@ -55,6 +55,7 @@ pv.visualize(normal_right3, "right3")
 pv.visualize(normal_right4, "right4")
 pv.visualize(normal_right5, "right5")
 
+
 left1_frame = gh.ultimate_use_frame(normal_left1, threshold)
 left2_frame = gh.ultimate_use_frame(normal_left2, threshold)
 left3_frame = gh.ultimate_use_frame(normal_left3, threshold)
@@ -67,14 +68,20 @@ right4_frame = gh.ultimate_use_frame(normal_right4, threshold)
 right5_frame = gh.ultimate_use_frame(normal_right5, threshold)
 
 
-print(left1_frame)
-print(left2_frame)
-print(left3_frame)
-print(left4_frame)
-print(left5_frame)
+suspect_frame_left1 = pv.change_to_frame(initial_frame, interval_frame, left1_frame)
+suspect_frame_left2 = pv.change_to_frame(initial_frame, interval_frame, left2_frame)
+suspect_frame_left3 = pv.change_to_frame(initial_frame, interval_frame, left3_frame)
+suspect_frame_left4 = pv.change_to_frame(initial_frame, interval_frame, left4_frame)
+suspect_frame_left5 = pv.change_to_frame(initial_frame, interval_frame, left5_frame)
+suspect_frame_right1 = pv.change_to_frame(initial_frame, interval_frame, right1_frame)
+suspect_frame_right2 = pv.change_to_frame(initial_frame, interval_frame, right2_frame)
+suspect_frame_right3 = pv.change_to_frame(initial_frame, interval_frame, right3_frame)
+suspect_frame_right4 = pv.change_to_frame(initial_frame, interval_frame, right4_frame)
+suspect_frame_right5 = pv.change_to_frame(initial_frame, interval_frame, right5_frame)
 
-print(right1_frame)
-print(right2_frame)
-print(right3_frame)
-print(right4_frame)
-print(right5_frame)
+frame_zip = [suspect_frame_left1, suspect_frame_left2, suspect_frame_left3, suspect_frame_left4, suspect_frame_left5,
+              suspect_frame_right1, suspect_frame_right2, suspect_frame_right3, suspect_frame_right4, suspect_frame_right5]
+
+bool_list = pv.frame_to_bool(total_frame, frame_zip)
+
+print(bool_list)

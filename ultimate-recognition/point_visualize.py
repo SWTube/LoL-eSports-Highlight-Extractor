@@ -27,31 +27,36 @@ def visualize(vector_1D: np.ndarray, name: str) -> None:
     return None
 
 
-def test(second):
-    """ 필요 없을 듯. 손으로 check
-    show
-    :param second:
+def change_to_frame(suspect_list):
+    frame_converted_list = []
+    for suspect_time in suspect_list:
+        frame_number = initial_frame + suspect_time * interval_frame
+        frame_converted_list.append(frame_number)
+    return frame_converted_list
+
+
+def change_to_frame(initial_frame: int, interval_frame: int, suspect_minute: list) -> list:
+    """
+    :param after_4_minute:
     :return:
     """
-    for k in range(4):
-        froi.call_frame_test(path, initial_frame+(second-2+k)*interval_frame)
-    return None
+    frame_list = []
+    for second in suspect_minute:
+        frame_number = initial_frame + second * interval_frame
+        frame_list.append(frame_number)
+    return frame_list
 
+
+def frame_to_bool(total_frame, zipped_frame_list: np.ndarray) -> np.ndarray:
+    champion_number = 10
+    formats = np.full((total_frame, champion_number), False)
+    champion_index = 0
+    for suspect_list in zipped_frame_list:
+        for frame_data in suspect_list:
+            formats[frame_data, champion_index] = True
+        champion_index += 1
+    return formats
 
 
 if __name__ == '__main__':
-    ### result 180 아래쪽도 필요함.
-    l1 = [244, 353, 500, 608, 611, 722, 725, 960, 962]
-    l2 = [244, 435, 669, 695, 723, 958]
-    l3 = [244, 490, 669, 695, 720, 957]
-    l4 = [425, 490, 669, 693, 695, 734, 965, 1015, 1135]
-    l5 =[439, 669, 695, 721, 993]
-
-    r1 = [273, 419, 495, 601, 962]
-    r2 = [434, 992, 1110]
-    r3 = [260, 310, 321, 342, 372, 396, 415, 426, 463, 490, 560, 579, 595, 620, 632, 644, 656, 672, 689, 700, 708, 734, 744, 808, 820, 834, 856, 872, 921, 982, 988, 999, 1006, 1016, 1118, 1136, 1142, 1172]
-    r4 = [235, 490, 499, 615, 725, 990]
-    r5 = [490, 723, 960]
-
-    for second in l1:
-        test(second)
+    print("test")
