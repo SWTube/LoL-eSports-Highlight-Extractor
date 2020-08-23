@@ -10,7 +10,7 @@
 import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
-
+import os
 
 def check_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> int:
     """
@@ -151,11 +151,32 @@ def store_video(video_name:str, video_path:str, compare_image: np.ndarray ) -> N
 
     checklist_writer(compare_result)
 
-def main() -> None:
-    replay_banner = cv.imread("C:/Users/82102/PycharmProjects/LoL-eSports-Highlight-Extractor/resources/replay_banner.png", cv.IMREAD_GRAYSCALE)
-    video_path = "C:/Users/82102/Downloads/video/FULL_LCKSpring2020_APKvsAF_W7D2_G1.mp4"
+def resource(path:str) -> np.ndarray:
+    """
+        Changing the type of picture file with path
 
-    store_video("FULL_LCKSpring2020_APKvsAF_W7D2_G1", video_path, replay_banner)
+        Args:
+            path: File's local path
+
+        Returns:
+            black-and-white image
+
+        Raises:
+            N/A
+    """
+    return cv.imread(path,cv.IMREAD_GRAYSCALE)
+
+
+def main() -> None:
+    image_path = "C:/Users/82102/PycharmProjects/LoL-eSports-Highlight-Extractor/resources/replay_banner.png"
+    replay_banner = resource(image_path)
+
+    video_path = "./resources/standardization/sample_video"
+    video_list = os.listdir(video_path)
+
+    for video_file in video_list:
+        new_video_path = video_path + "/" + video_file
+        store_video(video_file[0:len(video_file) - 4], new_video_path, replay_banner)
 
 
 if __name__ == '__main__':
