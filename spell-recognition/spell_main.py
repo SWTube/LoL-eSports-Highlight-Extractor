@@ -53,6 +53,7 @@ def main():
 
     ## First frame analysis
     first_frame_spell = lsr.extract_spell_images(frames[0])
+    loop_num = 0
 
     for in_game_spell_image in first_frame_spell:
         similarity_list = []
@@ -64,9 +65,12 @@ def main():
 
         # Find the image with the highest similarity value.
         spell_index = similarity_list.index(max(similarity_list))
-
+        # Check the image load correctly.
+        print(lsr.check_spell_name(spell_file, spell_index, loop_num))
         # Append this spell image in fixed_spell_list as np.ndarray data type.
         fixed_spell_list.append(spell_image_data[spell_index])
+
+        loop_num += 1
 
     del similarity_list
     del spell_index

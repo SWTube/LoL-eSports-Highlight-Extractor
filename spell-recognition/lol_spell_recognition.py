@@ -265,6 +265,31 @@ def save_result_as_csv(similarity: list) -> None:
 
     return None
 
+def check_spell_name(spell_name: list, spell_index: int, loop_num : int) -> list:
+    """
+        Check first frame analysis works well.
+
+        Args:
+            spell_name: List of summoner spell's name.
+            spell_index: Index of spell_name list
+            loop_num : var which indicates how many times function loop
+
+        Raises:
+            None
+        """
+
+    spell_location = ["left_summoner_1_D_spell", "left_summoner_1_F_spell", "left_summoner_2_D_spell",
+                      "left_summoner_2_F_spell", "left_summoner_3_D_spell", "left_summoner_3_F_spell",
+                      "left_summoner_4_D_spell", "left_summoner_4_F_spell", "left_summoner_5_D_spell",
+                      "left_summoner_5_F_spell", "right_summoner_1_D_spell", "right_summoner_1_F_spell",
+                      "right_summoner_2_D_spell", "right_summoner_2_F_spell", "right_summoner_3_D_spell",
+                      "right_summoner_3_F_spell", "right_summoner_4_D_spell", "right_summoner_4_F_spell",
+                      "right_summoner_5_D_spell", "right_summoner_5_F_spell"]
+
+    summoner_spell = []
+
+    summoner_spell.append(spell_location[loop_num] + ":" + spell_name[spell_index])
+    return summoner_spell
 
 def main():
     print("----------------------------------------")
