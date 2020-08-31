@@ -4,7 +4,7 @@
 #  Programmer: littlecsi
                bluehyena
 #  Start Date: 06/05/20
-# Last Update: July 29, 2020
+# Last Update: July 31, 2020
 #     Purpose: Functions that recognizes the cooltime of summoner spells
                and uses this data to calculate highlight score of the game.
 """
@@ -257,11 +257,34 @@ def save_result_as_csv(similarity: list) -> None:
                 "right_summoner_3_F_spell", "right_summoner_4_D_spell", "right_summoner_4_F_spell",
                 "right_summoner_5_D_spell", "right_summoner_5_F_spell"]
 
+    left_side = np.zeros(3600)
     for idx in range(len(filename)):
+        # Saving similarity of spell
         path = "../result/similarity/" + filename[idx] + extension
         with open(path, 'w', newline='') as file:
             csv_writer = csv.writer(file)
             csv_writer.writerow(similarity[idx])
+
+        # Checking when this spell used
+        path = "../result/similarity_check/" + filename[idx] + extension
+        with open(path, 'w', newline='') as file:
+            check_row = []
+            for idx2 in range(len(similarity[idx]) - 1):
+                if((similarity[idx][idx2 + 1] - similarity[idx][idx2]) / similarity[idx][idx2] * 100) < -50:
+                    similarity_error = True
+                    # Checking similarity while 10s
+                    for idx3 in range(idx2, idx2 + 10):
+                        if ((similarity[idx][idx3 + 1] - similarity[idx][idx2]) / similarity[idx][idx2] * 100) > -50:
+                            similarity_error = False
+                    if similarity_error:
+                        # If left side was hidden, erase it
+                        if "left" in filename[idx]:
+                            left_side[idx2] += 1
+                            if left_side[idx2] == 10:
+                                print(idx2)
+                        check_row.append(idx2)
+            csv_writer = csv.writer(file)
+            csv_writer.writerow(check_row)
 
     return None
 
