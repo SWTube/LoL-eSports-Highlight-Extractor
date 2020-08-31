@@ -3,8 +3,9 @@
 #        Team: visual recognition 2
 #  Programmer: littlecsi
                bluehyena
+               ssw03270
 #  Start Date: 06/05/20
-# Last Update: July 31, 2020
+# Last Update: August 31, 2020
 #     Purpose: Functions that recognizes the cooltime of summoner spells
                and uses this data to calculate highlight score of the game.
 """
