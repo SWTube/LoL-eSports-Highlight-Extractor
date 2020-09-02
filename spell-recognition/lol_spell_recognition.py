@@ -238,12 +238,13 @@ def extract_spell_images(frame: np.ndarray, loc: int = 0) -> list:
         assert False
 
 
-def save_result_as_csv(similarity: list) -> None:
+def save_result_as_csv(similarity: list, spell_names: list) -> None:
     """
     Save similarity_list as csv file.
 
     Args:
         similarity: Result list containing all similarity values.
+        spell_names : List of sumonner's spell in game.
 
     Raises:
         None
@@ -260,7 +261,7 @@ def save_result_as_csv(similarity: list) -> None:
 
     left_side = np.zeros(3600)
     for idx in range(len(filename)):
-        # Saving similarity of spell
+        # Saving similarity
         path = "../result/similarity/" + filename[idx] + extension
         with open(path, 'w', newline='') as file:
             csv_writer = csv.writer(file)
@@ -284,7 +285,9 @@ def save_result_as_csv(similarity: list) -> None:
                             if left_side[idx2] == 10:
                                 print(idx2)
                         check_row.append(idx2)
+            # Write name of spell and used time
             csv_writer = csv.writer(file)
+            csv_writer.writerow(spell_names[idx])
             csv_writer.writerow(check_row)
 
     return None

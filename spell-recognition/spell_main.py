@@ -22,6 +22,7 @@ def main():
     in_game_spells = []
     similarity_result = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
     spell_image_data = []
+    spell_names = []
 
     frame_count = 0
 
@@ -67,6 +68,8 @@ def main():
         spell_index = similarity_list.index(max(similarity_list))
         # Check the image load correctly.
         print(lsr.check_spell_name(spell_file, spell_index, loop_num))
+        # Append name of spell to find smite.
+        spell_names.append(lsr.check_spell_name(spell_file, spell_index, loop_num))
         # Append this spell image in fixed_spell_list as np.ndarray data type.
         fixed_spell_list.append(spell_image_data[spell_index])
 
@@ -96,7 +99,7 @@ def main():
     print()
 
     # Save these results in csv file
-    lsr.save_result_as_csv(similarity_result)
+    lsr.save_result_as_csv(similarity_result, spell_names)
 
     vs.visualize_result()
 
