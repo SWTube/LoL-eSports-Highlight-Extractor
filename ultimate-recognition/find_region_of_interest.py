@@ -1,8 +1,6 @@
 import cv2 as cv
 import numpy as np
 
-path = "raw3.mp4"
-
 
 def convert_window_freestyle(name: str) -> None:
     """
@@ -39,7 +37,7 @@ def call_frame(path: str, frame_number: int) -> np.ndarray:
 
 def call_frame_test(path: str, frame_number: int):
     """
-    test version of call_frame function. this function show what call_frame do
+    test version of call_frame function. this function show what call_frame is
     """
     cap = cv.VideoCapture(path)
     cap.set(cv.CAP_PROP_POS_FRAMES, frame_number)
@@ -102,6 +100,8 @@ def cut_image_test(image: np.ndarray) -> list:
     cv.destroyAllWindows()
     return result
 
+
 if __name__ == '__main__':
+    path = "raw3_cuted.mp4"
     first_frame = call_frame_test(path,14000)
     cut_image_test(first_frame)

@@ -6,18 +6,19 @@ import math
 import time
 import point_visualize as pv
 
-
-interval_frame = 60 # 60FPS 기준, 만약 다른 FPS가 나올시에 바꿀 것임.
+# Configuration Variable
+path ="test.mp4"
 initial_frame = 14400 # after 4 minute
-path = "raw3_cuted.mp4"
-# threshold 하고, standard 를 전역변수로 설정하면 다른 모듈에서 쓸 때 import 해야하나? 아니면 그냥 지역변수로 설정하는 것이 좋을까?
+
+
 cap = cv.VideoCapture(path)
+interval_frame = int(cap.get(cv.CAP_PROP_FPS))+1
 total_frame = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
 analyze_frame = (total_frame - initial_frame) / interval_frame
 threshold = math.sqrt(1/analyze_frame)
-cap = cv.VideoCapture(path)
 
-skill_similarity_matrix = gh.in_game_similarity(initial_frame, interval_frame)
+
+skill_similarity_matrix = gh.in_game_similarity(path, initial_frame, interval_frame)
 
 
 left1 = skill_similarity_matrix[:, 0]

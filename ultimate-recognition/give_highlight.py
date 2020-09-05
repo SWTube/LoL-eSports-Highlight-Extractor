@@ -2,14 +2,9 @@ import numpy as np
 import find_region_of_interest as froi
 import cv2 as cv
 import time
-path = "raw3_cuted.mp4"
-cap = cv.VideoCapture(path)
-initial_frame = 14400
-start_frame = froi.call_frame(path, initial_frame)
-standard_skill_list = froi.cut_image(start_frame)
 
 
-def analyze_difference(standard_skill_image: np.ndarray, compare_skill_image: np.ndarray) -> int: # 여기서는 standard 변수를 받았는데 아래 함수에서는 전역 변수로 사용함. 모두 전역 변수로 사용하게 해야하나? 아니면 근야 둘다 함수 얀에서 선언할까?
+def analyze_difference(standard_skill_image: np.ndarray, compare_skill_image: np.ndarray) -> int:
     """
     Image compare algorithm,
     analize tho image's brightness difference. 2D array gray image data should have same shape!
@@ -25,7 +20,7 @@ def analyze_difference(standard_skill_image: np.ndarray, compare_skill_image: np
     return difference
 
 
-def make_difference_list(compare_list: list) -> list:
+def make_difference_list(path, initial_frame, compare_list: list) -> list:
     """
     input champion skill image data list.
     compare difference between unused skill image list.
@@ -37,6 +32,8 @@ def make_difference_list(compare_list: list) -> list:
         1D array, which contain difference value
         ex) [difference rate, difference rate, ...]
     """
+    start_frame = froi.call_frame(path, initial_frame)
+    standard_skill_list = froi.cut_image(start_frame)
     difference_list = []
     for champion_index in range(10):
         difference = analyze_difference(standard_skill_list[champion_index], compare_list[champion_index])
@@ -45,7 +42,7 @@ def make_difference_list(compare_list: list) -> list:
     return difference_list
 
 
-def in_game_similarity(initial: int, interval: int) -> np.ndarray:  # 각 챔피언마다 해서 비동기적으로 하면 더 빠를 듯. 비동기적으로 못하면 행렬로 한번에 계산하는 것이 더 빠를 듯. 너무 오래걸림. 그리고 더 분할 해야 할 듯
+def in_game_similarity(path: str, initial: int, interval: int) -> np.ndarray:
     """
     after initial frame, call in game skill frame which we analyze.
     make 2D array matrix, which contain difference list.
@@ -71,12 +68,13 @@ def in_game_similarity(initial: int, interval: int) -> np.ndarray:  # 각 챔피
     start = time.time()
     analyze_data = np.empty(10)
     frame_number = 0
+    cap = cv.VideoCapture(path)
     while cap.get(cv.CAP_PROP_FRAME_COUNT)-interval > initial+frame_number*interval:
         print((initial+frame_number*interval)/(cap.get(cv.CAP_PROP_FRAME_COUNT)-interval)*100, "% completed.")
         frame_number += 1
         compare_frame = froi.call_frame(path, initial+frame_number*interval)
         compare_skill_list = froi.cut_image(compare_frame)
-        frame_similarity = make_difference_list(compare_skill_list)
+        frame_similarity = make_difference_list(path, initial, compare_skill_list)
         analyze_data = np.vstack([analyze_data, frame_similarity])
     print("time :", time.time() - start)
     return analyze_data
@@ -96,7 +94,7 @@ def normalize(vector: np.ndarray) -> np.ndarray:
     return vector / norm
 
 
-def ultimate_use_frame(skill_data_vector: np.ndarray, threshold: int):# threshold를 안에다가 설정하면 함수를 부를 때마다 다시 계산하는거 아닌가?
+def ultimate_use_frame(skill_data_vector: np.ndarray, threshold: int):
     """
     Skill use frame find algorithm.
 
@@ -123,22 +121,9 @@ def ultimate_use_frame(skill_data_vector: np.ndarray, threshold: int):# threshol
 
 
 
-
-
-
-
-def extract_video_test(path: str, interest_frame: list) -> None:
-    """
-    asdf
-    :param
-        path: path to video
-        interest_frame:
-    :raise save
-    :return: None
-    """
-
-
 if __name__ == '__main__':
+    path = "raw3_cuted.mp4"
+    start_frame = 14400
     standard_skill_list_test = froi.cut_image_test(start_frame)
     compare_frame = froi.call_frame(path, 40000)
     compare_skill_list = froi.cut_image_test(compare_frame)
