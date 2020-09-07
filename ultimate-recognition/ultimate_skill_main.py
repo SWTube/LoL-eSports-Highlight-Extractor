@@ -20,7 +20,7 @@ def get_is_ultimate_used() -> list:
             None
     """
     # Configuration Variable
-    path ="test.mp4"
+    path ="test4.mp4"
     initial_frame = 14400 # after 4 minute
 
 
@@ -28,8 +28,8 @@ def get_is_ultimate_used() -> list:
     interval_frame = int(cap.get(cv.CAP_PROP_FPS))+1
     total_frame = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
     analyze_frame = (total_frame - initial_frame) / interval_frame
-    # threshold = math.sqrt(1/analyze_frame)
-    threshold = 1 / (analyze_frame * analyze_frame)
+    threshold = math.sqrt(1/analyze_frame)
+    #threshold = 1 / (analyze_frame * analyze_frame)
 
 
     skill_similarity_matrix = gh.in_game_similarity(path, initial_frame, interval_frame)
