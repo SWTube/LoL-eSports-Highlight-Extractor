@@ -97,6 +97,30 @@ def video_to_list(path: str) -> (list, int):
     return frame_list, frame_count
 
 
+def get_image_from_video(image_path : str) -> None:
+    """
+    make video to one image, just make it, not return
+    Args:
+        image_path : this is mp4's path
+    Returns:
+        nothing return
+    Raises:
+        None
+    """
+    video = cv.VideoCapture(image_path)
+    success, image = video.read()
+
+    iter = 0
+
+    while(True):
+        success, image = video.read()
+        iter+=1
+
+        if (iter == 500):
+            break
+    cv.imwrite("test4.jpeg", image)
+
+
 def draw_circle_on_ultimate(circle_x : int, circle_y : int) -> None:
     """
     Draw circle on ultimate skill to get ultimate skill's coordinate
@@ -203,7 +227,7 @@ def compare_champion_icon_with_champion_icon_data(champion_image_path : str, tes
     # plt.imshow(img3), plt.show()
 
 
-def main() -> None:
+def get_champion_name() -> None:
     # draw_circle_on_ultimate(1847, 165)
     # draw_rectangle_on_champion(1847, 160)
 
@@ -216,7 +240,9 @@ def main() -> None:
     champion_icon_files = []
 
     champion_image_path = "../resources/champions_image/"
-    test_image = "test2.jpeg"
+    test_video = "test4.mp4"
+    get_image_from_video(test_video)
+    test_image = "test4.jpeg"
 
     # Load champion's name list & append name to list
     champion_list = open("../resources/champion_list.txt", 'r')
@@ -245,6 +271,12 @@ def main() -> None:
         champion_name.append(champion_icon_files[champion_index][:-4])
     for index in range(len(champion_name)):
         print(champion_name[index])
+
+    return champion_name
+
+
+def main():
+    print("finding_ultimate.py")
 
 
 if __name__ == "__main__":

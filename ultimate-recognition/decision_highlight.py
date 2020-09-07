@@ -49,7 +49,7 @@ def decision_highlight_score(champion_name : list, is_ultimate_used : list) -> f
         If ultimate skill is used, sum highlight score
         Args:
             champion_name : this is str type list, use to find ultimate skill's cool time
-            is_ultimate_used : this is bool type list, to know ultimate is used
+            is_ultimate_used : this is bool type list, to know ultimate is used, 1 dim list
         Returns:
             champion ultimate skill's cool time dictionary
         Raises:
@@ -65,6 +65,26 @@ def decision_highlight_score(champion_name : list, is_ultimate_used : list) -> f
                 highlight_score += champion_cooltime_dictionary[champion_name[champion_count]]
 
     return highlight_score
+
+
+def get_highlight_list(champion_name : list, is_ultimate_used : list) -> list:
+    """
+        Get highlight score by detect ultimate
+        Args:
+            champion_name : this is str type list, use to find ultimate skill's cool time
+            is_ultimate_used : this is bool type list, to know ultimate is used, 2 dim list
+        Returns:
+            highlight score in each second
+        Raises:
+            None
+    """
+    # Add here!
+    highlight_list = []
+
+    for sec in is_ultimate_used:
+        highlight_list.append(decision_highlight_score(champion_name, sec))
+
+    return highlight_list
 
 
 def main() -> None:
