@@ -2,7 +2,7 @@
 #      Team: standardization
 # Programmer: wpdudH
 # Start Date: 07/15/20
-#Last Update: August 9, 2020
+#Last Update: September 7, 2020
 #    Purpose: Raw video consists of in-game videos and replay videos.
 #             So we need to distinguish between in-game videos and replay videos.
 #             This program carries out that work.
@@ -77,6 +77,7 @@ def frame_resize(frame: np.ndarray, image: int) -> np.ndarray:
             image: Determinist of frame resize value
                    If image value is 0, frame will be resized to the same size as the replay banner
                    If image value is 1, frame will be resized to the same size as the highlight banner
+                   If image value is 2, frame will be resized to the same size as the pro view banner
         Returns:
             frame_resize: Resized frame
         Raises:
@@ -86,19 +87,27 @@ def frame_resize(frame: np.ndarray, image: int) -> np.ndarray:
 
     if image == 0:
         start_height = round(45 / 1080 * height)
+        start_width = 0
         end_width = round(254 / 1920 * width)
         end_height = round(122 / 1080 * height)
         # replay_banner start point : (0,45)
         # replay_banner end point : (254,122)
-
-    else:
+    elif image == 1:
         start_height = round(45 / 1080 * height)
+        start_width = 0
         end_width = round(339 / 1920 * width)
         end_height = round(122 / 1080 * height)
         # highlight_banner start point : (0,45)
         # highlight_banner end point : (339,122)
+    else:
+        start_height = round(45 / 1080 * height)
+        start_width = round(1592 / 1920 * width)
+        end_width = 1920
+        end_height = round(122 / 1080 * height)
+        # pro_view_banner start point : (1592,45)
+        # pro_view_banner end point : (1920,122)
 
-    frame_resize = frame[start_height:end_height, 0:end_width]
+    frame_resize = frame[start_height:end_height, start_width:end_width]
     # resizing frame to reduce the computation
 
     return frame_resize
@@ -141,13 +150,15 @@ def store_video(video_name:str, video_path:str, compare_images: list ) -> None:
 
 
         if video_capture.get(cv.CAP_PROP_POS_FRAMES) % int(fps) == 0:
-            if check_algorithm(frame_resize(frame, 0), compare_images[0]) == 1: # compare frame with replay_banner
+            if check_algorithm(frame_resize(frame, 0), compare_images[0]) == 1 or check_algorithm(frame_resize(frame, 2), compare_images[2]) == 1:
+                # compare frame with replay_banner and pro view banner
                 compare_result.append('1')
                 check = False
                 print("replay")
             else:
                 if video_capture.get(cv.CAP_PROP_POS_FRAMES) > total_frames - (240 * fps):
-                    if check_algorithm(frame_resize(frame, 1), compare_images[1]) == 1:  # compare frame with highlight_banner
+                    if check_algorithm(frame_resize(frame, 1), compare_images[1]) == 1 or check_algorithm(frame_resize(frame, 2), compare_images[2]) == 1:
+                        # compare frame with highlight_banner and pro view banner
                         break
                 compare_result.append('0')
                 check = True
@@ -170,13 +181,10 @@ def store_video(video_name:str, video_path:str, compare_images: list ) -> None:
 def resource(path:str) -> np.ndarray:
     """
         Changing the type of picture file with path
-
         Args:
             path: File's local path
-
         Returns:
             black-and-white image
-
         Raises:
             N/A
     """
@@ -188,10 +196,14 @@ def main() -> None:
     replay_banner = resource(replay_banner_path)
     highlight_banner_path = "C:/Users/82102/PycharmProjects/LoL-eSports-Highlight-Extractor/resources/highlight.png"
     highlight_banner = resource(highlight_banner_path)
+    pro_view_banner_path = "C:/Users/82102/PycharmProjects/LoL-eSports-Highlight-Extractor/resources/pro view.png"
+    pro_view_banner = resource(pro_view_banner_path)
+
 
     compare_images = []
     compare_images.append(replay_banner)
     compare_images.append(highlight_banner)
+    compare_images.append(pro_view_banner)
 
     video_path = "./resources/standardization/sample_video"
     video_list = os.listdir(video_path)
@@ -199,8 +211,6 @@ def main() -> None:
     for video_file in video_list:
         new_video_path = video_path + "/" + video_file
         store_video(video_file[0:len(video_file) - 4], new_video_path, compare_images)
-
-
 
 if __name__ == '__main__':
     main()
