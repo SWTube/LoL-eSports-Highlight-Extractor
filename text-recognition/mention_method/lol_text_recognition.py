@@ -1,7 +1,7 @@
 import csv
 
 
-def extract_num_of_chats_in_5sec(filename) -> list:  # 5초안에 25개의 채팅이 입력되면 하이라이트로 처리
+def extract_num_of_chats_in_5sec(filename) -> list: # 5초안에 25개의 채팅이 입력되면 하이라이트로 처리
     chat_file = open('{}_comments.csv'.format(filename), 'r', encoding='UTF-8')
 
     df_lol_chat = csv.reader(chat_file)
@@ -21,6 +21,7 @@ def extract_num_of_chats_in_5sec(filename) -> list:  # 5초안에 25개의 채�
     num_end = 1
     highlight_time = []
 
+
     while True:
         try:
             if (float(df_time_column[num_end]) - float(df_time_column[num_start])) > 5:
@@ -39,7 +40,8 @@ def extract_num_of_chats_in_5sec(filename) -> list:  # 5초안에 25개의 채�
     return highlight_time
 
 
-def extract_time_of_100chat(filename) -> list:  # 50개의 채팅이 10초안에 입력되면 하이라이트로 처리
+
+def extract_time_of_100chat(filename) -> list: #50개의 채팅이 10초안에 입력되면 하이라이트로 처리
 
     chat_file = open('{}_comments.csv'.format(filename), 'r', encoding='UTF-8')
 
@@ -56,13 +58,14 @@ def extract_time_of_100chat(filename) -> list:  # 50개의 채팅이 10초안에
 
     chat_file.close()
 
+
     num_start = 0
     num_end = 100
     highlight_time = []
 
     while True:
         try:
-            if (float(df_time_column[num_end]) - float(df_time_column[num_start])) < 10:
+            if (float(df_time_column[num_end]) - float(df_time_column[num_start])) < 10 :
                 highlight_time.append(df_time_column[num_end])
             num_end += 1
             num_start += 1
@@ -81,7 +84,7 @@ def add_highlight_time_list(filename) -> list:
     return total_highlight_time_list
 
 
-def extract_highlight_section(highlight_list):
+def extract_highlight_section(highlight_list,frame_num):
     highlight_list.reverse()
     highlight_start = highlight_list.pop()
     highlight_end = highlight_list.pop()
@@ -93,7 +96,18 @@ def extract_highlight_section(highlight_list):
             while (float(highlight_list[-1]) - float(highlight_end)) < 10:
                 highlight_end = highlight_list.pop()
             if (float(highlight_end) - float(highlight_start)) > 5:
-                print("{}번째 하이라이트 구간: {}~{}".format(num_of_highlight, highlight_start, highlight_end))
+                if frame_num == 30:
+
+                    print("{}번째 하이라이트 구간: {}~{}".format(num_of_highlight, (float(highlight_start)-3)//1 * 30, (float(highlight_end)-3)//1 * 30))
+
+                elif frame_num == 60:
+                    print("{}번째 하이라이트 구간: {}~{}".format(num_of_highlight, (float(highlight_start)-3) * 60, (float(highlight_end)-3) * 60))
+
+                elif frame_num == "sec":
+                    print("{}번째 하이라이트 구간: {}~{}".format(num_of_highlight, (float(highlight_start)-3), (float(highlight_end)-3)))
+                else:
+                    print("Please enter 30 or 60 or sec")
+                    break
                 num_of_highlight += 1
             highlight_start = highlight_list.pop()
             highlight_end = highlight_list.pop()
@@ -101,9 +115,8 @@ def extract_highlight_section(highlight_list):
         except:
             break
 
+def main(filename,frame_num):
 
-def main(filename):
     highlight_list = add_highlight_time_list(filename)
 
-    extract_highlight_section(highlight_list)
-
+    extract_highlight_section(highlight_list,frame_num)
