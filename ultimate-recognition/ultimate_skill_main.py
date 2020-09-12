@@ -118,7 +118,7 @@ def get_highlight_graph() -> None:
     highlight_score_list = dh.get_highlight_list(champion_name, is_ultimate_used)
 
     graph_x = range(len(is_ultimate_used))
-    graph_y = champion_name
+    graph_y = highlight_score_list
 
     plt.plot(graph_x, graph_y)
     plt.show()
