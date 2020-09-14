@@ -5,13 +5,14 @@
                bluehyena
                ssw03270
 #  Start Date: 06/05/20
-# Last Update: August 31, 2020
+# Last Update: Sep 14, 2020
 #     Purpose: Functions that recognizes the cooltime of summoner spells
                and uses this data to calculate highlight score of the game.
 """
 import csv
 import cv2 as cv
 import numpy as np
+import os
 from skimage import metrics
 
 # Spell Highlight Scores
@@ -33,6 +34,10 @@ g_teleport_score = 15
 
 g_flash_score = 20
 
+video_total_frame = 0
+video_frame_rate = 30
+
+video_timer = np.zeros(10000)
 
 def video_to_list(path: str) -> (list, int):
     """
@@ -44,7 +49,7 @@ def video_to_list(path: str) -> (list, int):
     Returns:
         If correct path is given, this function will return a list of frames and the number of frames.
         If given path is wrong, returns an empty list.
-
+        frame_rate
     Raises:
         None
     """
@@ -89,7 +94,7 @@ def video_to_list(path: str) -> (list, int):
     print()
     vid.release()
 
-    return frame_list, total_frame_count
+    return frame_list, total_frame_count, frame_rate
 
 
 def compare_images(image_one: np.ndarray, image_two: np.ndarray) -> float:
@@ -275,16 +280,18 @@ def save_result_as_csv(similarity: list, spell_names: list) -> None:
                 if((similarity[idx][idx2 + 1] - similarity[idx][idx2]) / similarity[idx][idx2] * 100) < -50:
                     similarity_error = True
                     # Checking similarity while 10s
-                    for idx3 in range(idx2, idx2 + 10):
-                        if ((similarity[idx][idx3 + 1] - similarity[idx][idx2]) / similarity[idx][idx2] * 100) > -50:
-                            similarity_error = False
+                    if(idx2 + 10 < len(similarity[idx]) - 1):
+                        for idx3 in range(idx2, idx2 + 10):
+                            if ((similarity[idx][idx3 + 1] - similarity[idx][idx2]) / similarity[idx][idx2] * 100) > -50:
+                                similarity_error = False
                     if similarity_error:
                         # If left side was hidden, erase it
                         if "left" in filename[idx]:
                             left_side[idx2] += 1
                             if left_side[idx2] == 10:
-                                print(idx2)
+                                video_timer[idx2] -= 10000
                         check_row.append(idx2)
+
             # Write name of spell and used time
             csv_writer = csv.writer(file)
             csv_writer.writerow(spell_names[idx])
@@ -317,6 +324,43 @@ def check_spell_name(spell_name: list, spell_index: int, loop_num : int) -> list
 
     summoner_spell.append(spell_location[loop_num] + ":" + spell_name[spell_index])
     return summoner_spell
+
+def save_highlight_score():
+    """
+        Set highlight score using similarity_check csv file.
+
+
+        Args:
+            highlight_score_array: List of highlight score.
+
+    :return:
+    """
+    path = "../result/similarity_check"
+    filelist = os.listdir(path)
+
+    for filename in filelist:
+        with open(path + "/" + filename, 'r') as file:
+            rdr = csv.reader(file)
+            score = 0
+            for idx in rdr:
+                if score == 0:
+                    score = set_highlight_score(idx[0])
+                else:
+                    for member in idx:
+                        video_timer[int(member)] += score
+
+    return video_timer
+
+def set_highlight_score(spell_name: str):
+    spell_file = ["Barrier.png", "Clarity.png", "Cleanse.png",
+                  "Exhaust.png", "Flash.png", "Ghost.png", "Heal.png", "Ignite.png", "Teleport.png"]
+    spell_score = [10, 0.1, 10, 10, 20, 10, 10, 10, 15]
+    num = 0
+    for i in range(len(spell_file)):
+        if spell_file[i] in spell_name:
+            num = i
+            break
+    return spell_score[num]
 
 def main():
     print("----------------------------------------")
