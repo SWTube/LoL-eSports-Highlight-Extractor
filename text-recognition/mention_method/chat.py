@@ -1,6 +1,7 @@
 import csv
 
-def extract_most_word_in_chat(chat_data):
+def extract_most_word_in_chat(chat_data, min, max):
+    print('----exract_most_word_in_chat----')
     chat_list = []
 
     resulting_list = []
@@ -14,7 +15,6 @@ def extract_most_word_in_chat(chat_data):
     # 채팅을 ' '로(단어로) 슬라이싱 후 중복된 횟수가 많은 순서대로 나열
     for row_in_csv in chat_data:
         seperated_chat = row_in_csv[2].split(' ')
-
         for seperated_chat_word in seperated_chat:
             chat_list.append(seperated_chat_word)
 
@@ -28,65 +28,73 @@ def extract_most_word_in_chat(chat_data):
     copied_counting_list.sort()
     copied_counting_list.reverse()
 
-    for chat_string in resulting_list:
-        print(chat_string + ", " + counting_list[resulting_list.index(chat_string)])
-
-    for top10_index in range(10, 20):
-        print(resulting_list[counting_list.index(copied_counting_list[top10_index])])
+    for top10_index in range(min, max):
+#        print(resulting_list[counting_list.index(copied_counting_list[top10_index])])
         completed_list.append(resulting_list[counting_list.index(copied_counting_list[top10_index])])
 
-    for target_word in completed_list:
-        extract_time(target_word, completed_list)
+    return completed_list
+
+#    for chat_string in resulting_list:
+ #       print(chat_string, ", ", counting_list[resulting_list.index(chat_string)])
 
 
+
+#    for target_word in completed_list:
+#        extract_time(target_word, completed_list)
+
+# 키워드 5초 내 10번 이상 중복 시 하이라이트
 def find_highlight_clip(word, chat_db):
-    highlight = []
-    start_time = 0
-    start_index = 0
-    chat_stack = 0
-    for chat_index in chat_db:
-        if word in chat_index[2] :
-            start_index = index(chat_index)
-            start_time = chat_index[0]
-            while chat_index[0 + chat_stack] != start_time + 5:
-                if word in chat_db[start_index + chat_stack]:
+    print('----fin_highlight_clip----', word)
+    time_list = []
+    for chat in chat_db:
+        print(chat, ", ", word)
+        if chat[2].find(word) != -1:
+            while True:
+                count = 0
+                index_count = 0
+                print("word is in chat, ", count)
+                if chat_db[chat_db.index(chat) + 1][0] <= (chat[0] + 5):
+                    if word in chat_db[chat_db.index(chat) + 1][2]:
+                        index_count += 1
+                if index_count > 9:
+                    time_list.append(chat[0])
+                    time_list.append(chat[0] + 20)
+    return time_list
 
-
-
+#666718347_comments.csv
 def main():
-
-    csv_filename = input(string)
-
+    print('----main----')
+    csv_filename = input()
     chat_file = open(csv_filename, encoding='utf-8')
-
     chat_data = csv.reader(chat_file)
+    result_list = extract_most_word_in_chat(chat_data, 10, 20)
 
-    extract_most_word_in_chat(chat_data)
+    print(result_list)
 
+    chat_list = []
 
+    for i in chat_data:
+        print(i[2])
+    print("chat_list: ", chat_list)
 
+    resulting_list = []
 
-    # 리스트 초기화(다른 방식을 쓰기 위해)
-    resulting_list.clear()
-    counting_list.clear()
-    chat_list.clear()
-    copied_counting_list.clear()
-    completed_list.clear()
+    for key_word in result_list:
+        print(find_highlight_clip(key_word, chat_data))
 
+    print("---------------")
 
     # 채팅 전체를 대상으로 중복된 횟수가 많은 순서대로 나열
     for row_in_csv in chat_data:
         if (row_in_csv not in resulting_list):
+            print("row_in_csv ", row_in_csv)
             resulting_list.append(row_in_csv)
             counting_list.append(1)
         else:
             counting_list[resulting_list.index(row_in_csv)] += 1
 
     for chat_string in resulting_list:
-        print(chat_string + ", " + counting_list[resulting_list.index(chat_string)])
-
-
-
+        print(chat_string, ", ", counting_list[resulting_list.index(chat_string)])
     """
     for list_index in counting_list:
         print(list_index)
@@ -94,7 +102,8 @@ def main():
     for list_index in resulting_list:
         print(list_index)
     """
-
     chat_file.close()
 
+
+main()
     # 채팅의 길이로 판단?
