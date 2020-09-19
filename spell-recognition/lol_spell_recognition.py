@@ -5,7 +5,7 @@
                bluehyena
                ssw03270
 #  Start Date: 06/05/20
-# Last Update: Sep 14, 2020
+# Last Update: Sep 19, 2020
 #     Purpose: Functions that recognizes the cooltime of summoner spells
                and uses this data to calculate highlight score of the game.
 """
@@ -122,65 +122,6 @@ def compare_images(image_one: np.ndarray, image_two: np.ndarray) -> float:
 
     return ssim_value
 
-
-# def compare_images_2(image_one: np.ndarray, image_two: np.ndarray) -> float:
-#     """
-#     Compare two images through histogram
-#
-#     Args:
-#         image_one: image in video
-#         image_two: original image
-#
-#     Returns:
-#         Similarity between two images
-#
-#     Raises:
-#         None
-#     """
-#     assert isinstance(image_one, np.ndarray)
-#     assert isinstance(image_two, np.ndarray)
-#
-#     # Convert to hsv
-#     hsv_a = cv.cvtColor(image_one, cv.COLOR_BGR2HSV)
-#     hsv_b = cv.cvtColor(image_two, cv.COLOR_BGR2HSV)
-#
-#     # Calculate and Normalize histogram
-#     hist_a = cv.calcHist([hsv_a], [0], None, [256], [0, 256])
-#     cv.normalize(hist_a, hist_a, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
-#     hist_b = cv.calcHist([hsv_b], [0], None, [256], [0, 256])
-#     cv.normalize(hist_b, hist_b, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
-#
-#     # Compare hist_a, hist_b
-#     a_b_comparison = cv.compareHist(hist_a, hist_b, 0)
-#
-#     return a_b_comparison
-#
-#
-# def compare_images_3(image_one: np.ndarray, image_two: np.ndarray) -> float:
-#     """
-#     Calculates the 'Mean Squared Error' between the two images,
-#     which is the sum of the squared difference between the two images;
-#     CAUTION! the two images must have the same dimension.
-#
-#     Args:
-#         image_one: Image to compare.
-#         image_two: Original image
-#
-#     Returns:
-#         MSE. Lower the error, the more "similar" the two images are.
-#
-#     Raises:
-#         None
-#     """
-#     assert isinstance(image_one, np.ndarray)
-#     assert isinstance(image_two, np.ndarray)
-#
-#     error = np.sum((image_one.astype("float") - image_two.astype("float")) ** 2)
-#     error /= float(image_one.shape[0] * image_one.shape[1])
-#
-#     return error
-
-
 def extract_spell_images(frame: np.ndarray, loc: int = 0) -> list:
     """
     Extracts summoners' spell images from the in-game image given as a parameter.
@@ -289,7 +230,8 @@ def save_result_as_csv(similarity: list, spell_names: list) -> None:
                         if "left" in filename[idx]:
                             left_side[idx2] += 1
                             if left_side[idx2] == 10:
-                                video_timer[idx2] -= 10000
+                                for i in range(int(idx2) - 5, int(idx2) + 5):
+                                    video_timer[i] -= 200
                         check_row.append(idx2)
 
             # Write name of spell and used time
@@ -301,16 +243,20 @@ def save_result_as_csv(similarity: list, spell_names: list) -> None:
 
 def check_spell_name(spell_name: list, spell_index: int, loop_num : int) -> list:
     """
-        Check first frame analysis works well.
+    Check first frame analysis works well.
 
-        Args:
-            spell_name: List of summoner spell's name.
-            spell_index: Index of spell_name list
-            loop_num : var which indicates how many times function loop
+    Args:
+        spell_name: List of summoner spell's name.
+        spell_index: Index of spell_name list
+        loop_num : var which indicates how many times function loop
 
-        Raises:
-            None
-        """
+    Raises:
+        None
+
+    Returns:
+        list of summoner spell name
+        summoner_spell
+    """
 
     spell_location = ["left_summoner_1_D_spell", "left_summoner_1_F_spell", "left_summoner_2_D_spell",
                       "left_summoner_2_F_spell", "left_summoner_3_D_spell", "left_summoner_3_F_spell",
@@ -325,15 +271,16 @@ def check_spell_name(spell_name: list, spell_index: int, loop_num : int) -> list
     summoner_spell.append(spell_location[loop_num] + ":" + spell_name[spell_index])
     return summoner_spell
 
-def save_highlight_score():
+def save_highlight_score() -> list:
     """
         Set highlight score using similarity_check csv file.
 
-
         Args:
-            highlight_score_array: List of highlight score.
+            None
 
-    :return:
+        Returns:
+            video timer which take highlight score
+
     """
     path = "../result/similarity_check"
     filelist = os.listdir(path)
@@ -347,11 +294,20 @@ def save_highlight_score():
                     score = set_highlight_score(idx[0])
                 else:
                     for member in idx:
-                        video_timer[int(member)] += score
+                        for i in range(int(member) - 5, int(member) + 5):
+                            video_timer[i] += score
 
     return video_timer
 
 def set_highlight_score(spell_name: str):
+    """
+    It doesn't save highlight score in array. Just check highlight score each spell.
+
+    Args:
+        spell_name: str of spell name
+    Returns:
+        spell_score : score, corresponding to the spell name
+    """
     spell_file = ["Barrier.png", "Clarity.png", "Cleanse.png",
                   "Exhaust.png", "Flash.png", "Ghost.png", "Heal.png", "Ignite.png", "Teleport.png"]
     spell_score = [10, 0.1, 10, 10, 20, 10, 10, 10, 15]
