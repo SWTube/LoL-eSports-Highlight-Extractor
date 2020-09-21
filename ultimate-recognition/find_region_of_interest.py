@@ -1,3 +1,11 @@
+"""
+#   File Name: find_region_of_interest.py
+#        Team: visual recognition 2
+#  Programmer: luckydipper
+#  Start Date: 08/08/20
+# Last Update: September 21, 2020
+#     Purpose: to find region of interest.
+"""
 import cv2 as cv
 import numpy as np
 

@@ -1,6 +1,7 @@
 import find_region_of_interest as froi
 import give_highlight as gh
 import cv2 as cv
+import numpy as np
 import matplotlib.pyplot as plt
 import math
 import time

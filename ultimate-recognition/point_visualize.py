@@ -1,3 +1,12 @@
+"""
+#   File Name: point_visualize.py
+#        Team: visual recognition 2
+#  Programmer: luckydipper
+#  Start Date: 08/08/20
+# Last Update: September 21, 2020
+#     Purpose: to visualize for test
+"""
+
 import numpy as np
 import find_region_of_interest as froi
 import give_highlight as gh
