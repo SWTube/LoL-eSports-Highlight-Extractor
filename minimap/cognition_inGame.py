@@ -50,12 +50,16 @@ def match_template(video_capture: np.ndarray, template: np.ndarray, pause_image:
             break
 
         frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        width_end, height_end = frame_gray.shape
+        width_end, height_end = frame_gray.shape # 1080, 1920
+        # width_end_2, height_end_2 = 638, 1138
 
-        width_start = round(780 / 1080 * width_end)
-        height_start = round(1620 / 1920 * height_end)
+        width_start = round(780 / 1080 * width_end) # 780
+        height_start = round(1620 / 1920 * height_end) # 1620
+        # width_start_2 = round(442 / 1080 * width_end) # 442
+        # height_start_2 = round(782 / 1920 * height_end) # 782
 
         frame_resize = frame_gray[width_start: width_end, height_start: height_end]
+        frame_resize_center = frame_gray[442: 638, 782: 1138]
 
         total_frames = int(video_capture.get(cv.CAP_PROP_FRAME_COUNT))
 
@@ -64,7 +68,7 @@ def match_template(video_capture: np.ndarray, template: np.ndarray, pause_image:
             percentage = int((current_frame / total_frames) * 100)
             print('{}/{} - {}%'.format(current_frame, total_frames, percentage))
             sift_ans = sift_algorithm(frame_resize, template)
-            pause_ans = pause.sift_algorithm(frame_resize, pause_image)
+            pause_ans = pause.sift_algorithm(frame_resize_center, pause_image)
             if sift_ans and pause_ans:
                 is_writing = True
             else:
