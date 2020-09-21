@@ -113,6 +113,7 @@ def get_image_from_video(image_path : str) -> None:
 
     iter = 0
 
+    # get jpeg
     while(True):
         success, image = video.read()
         iter+=1
@@ -242,6 +243,7 @@ def get_champion_name() -> None:
 
     champion_icon_files = []
 
+    # image path
     champion_image_path = "../resources/champions_image/"
     test_video = "test4.mp4"
     get_image_from_video(test_video)
