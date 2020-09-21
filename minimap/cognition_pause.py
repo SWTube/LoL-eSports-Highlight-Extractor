@@ -13,6 +13,7 @@
 """
 
 import cv2 as cv
+import matplotlib as plot
 import numpy as np
 '''
 def match_template(video_capture: np.ndarray, pause_image: np.ndarray) -> None:

@@ -3,20 +3,20 @@
 #        Team: standardization
 #  Programmer: tjswodud
 #  Start Date: 07/07/20
-# Last Update: August 18, 2020
+# Last Update: September 21, 2020
 #     Purpose: Full video of LCK will be given in this program.
 #              And compare frame and minimap image (template) per frame, using sift_algorithm.
 #              (if it success for compare, that frame is ingame, if not, that frame is not ingame.)
 #              Finally, this program will return edited video, except for frame that is not ingame.
 """
 
+import cognition_pause as pause
 import cv2 as cv
 import numpy as np
 import os
-from matplotlib import pyplot as plot
 import time
 
-def match_template(video_capture: np.ndarray, template: np.ndarray, video_file: str, video_path: str) -> None:
+def match_template(video_capture: np.ndarray, template: np.ndarray, pause_image: np.ndarray, video_file: str, video_path: str) -> None:
     """
         Compare captured video and template image (minimap image) with sift_algorithm
         , and then write video frame that is in_game
@@ -64,7 +64,8 @@ def match_template(video_capture: np.ndarray, template: np.ndarray, video_file: 
             percentage = int((current_frame / total_frames) * 100)
             print('{}/{} - {}%'.format(current_frame, total_frames, percentage))
             sift_ans = sift_algorithm(frame_resize, template)
-            if sift_ans:
+            pause_ans = pause.sift_algorithm(frame_resize, pause_image)
+            if sift_ans and pause_ans:
                 is_writing = True
             else:
                 is_writing = False
@@ -124,17 +125,18 @@ def create_capture(path: str):
 def main() -> None:
     start_time = time.time()
 
-    resource_path = "D:/video/resources"
-    output_path = "D:/video/outputs"
+    resource_path = "E:/video/resources"
+    output_path = "E:/video/outputs"
     video_list = os.listdir(resource_path)
     template_image = cv.imread("../resources/minimap_templ.png", cv.COLOR_BGR2GRAY)
+    pause_image = cv.imread("../resources/pause_image.png", cv.COLOR_BGR2GRAY)
 
     video_num = 1
     for video_file in video_list:
         new_video_path = resource_path + '/' + video_file
         video_capture = create_capture(new_video_path)
         print('[No.{} video is editing...]'.format(video_num))
-        match_template(video_capture, template_image, video_file, output_path)
+        match_template(video_capture, template_image, pause_image, video_file, output_path)
         video_num += 1
 
     end_time = time.time()
