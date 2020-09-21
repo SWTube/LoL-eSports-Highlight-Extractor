@@ -20,16 +20,13 @@ def match_template(video_capture: np.ndarray, template: np.ndarray, pause_image:
     """
         Compare captured video and template image (minimap image) with sift_algorithm
         , and then write video frame that is in_game
-
         Args:
             video_capture: captured video using VideoCapture in __main__
             template: a template image (minimap image) to compare with video_capture
             video_file: name of video file in string type
             video_path: path of output_video (output_video will be stored this path)
-
         Returns:
             None
-
         Raises:
             N/A
     """
@@ -50,12 +47,16 @@ def match_template(video_capture: np.ndarray, template: np.ndarray, pause_image:
             break
 
         frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        width_end, height_end = frame_gray.shape
+        width_end, height_end = frame_gray.shape # 1080, 1920
+        # width_end_2, height_end_2 = 638, 1138
 
-        width_start = round(780 / 1080 * width_end)
-        height_start = round(1620 / 1920 * height_end)
+        width_start = round(780 / 1080 * width_end) # 780
+        height_start = round(1620 / 1920 * height_end) # 1620
+        # width_start_2 = round(442 / 1080 * width_end) # 442
+        # height_start_2 = round(782 / 1920 * height_end) # 782
 
         frame_resize = frame_gray[width_start: width_end, height_start: height_end]
+        frame_resize_center = frame_gray[442: 638, 782: 1138]
 
         total_frames = int(video_capture.get(cv.CAP_PROP_FRAME_COUNT))
 
@@ -64,7 +65,7 @@ def match_template(video_capture: np.ndarray, template: np.ndarray, pause_image:
             percentage = int((current_frame / total_frames) * 100)
             print('{}/{} - {}%'.format(current_frame, total_frames, percentage))
             sift_ans = sift_algorithm(frame_resize, template)
-            pause_ans = pause.sift_algorithm(frame_resize, pause_image)
+            pause_ans = pause.sift_algorithm(frame_resize_center, pause_image)
             if sift_ans and pause_ans:
                 is_writing = True
             else:
@@ -82,16 +83,13 @@ def match_template(video_capture: np.ndarray, template: np.ndarray, pause_image:
 def sift_algorithm(frame_resize: np.ndarray, template: np.ndarray) -> bool:
     """
         Compare video's frame and template image, using sift_algorithm
-
         Args:
             frame_resize: each of video's frame that is resized to template image
             template: a template image (minimap image) to compare with video_capture
-
         Returns:
             [bool type]
             if frame_resize and template match more than 15 points, return True (this frame is ingame.)
             if not, return False (this frame is not ingame.)
-
         Raises:
             N/A
     """
@@ -125,8 +123,14 @@ def create_capture(path: str):
 def main() -> None:
     start_time = time.time()
 
-    resource_path = "E:/video/resources"
-    output_path = "E:/video/outputs"
+    # in Windows OS
+    # resource_path = "E:/video/resources"
+    # output_path = "E:/video/outputs"
+
+    # in Ubuntu OS
+    resource_path = "/media/cogongnam/f8447e77-84e5-43a2-a0f0-e1b1977f1322/video/resources"
+    output_path = "/media/cogongnam/f8447e77-84e5-43a2-a0f0-e1b1977f1322/video/outputs"
+
     video_list = os.listdir(resource_path)
     template_image = cv.imread("../resources/minimap_templ.png", cv.COLOR_BGR2GRAY)
     pause_image = cv.imread("../resources/pause_image.png", cv.COLOR_BGR2GRAY)
