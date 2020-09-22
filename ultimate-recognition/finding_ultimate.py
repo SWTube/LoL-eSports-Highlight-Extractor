@@ -107,11 +107,13 @@ def get_image_from_video(image_path : str) -> None:
     Raises:
         None
     """
+    # get jpeg file use video to image
     video = cv.VideoCapture(image_path)
     success, image = video.read()
 
     iter = 0
 
+    # get jpeg
     while(True):
         success, image = video.read()
         iter+=1
@@ -135,6 +137,7 @@ def draw_circle_on_ultimate(circle_x : int, circle_y : int) -> None:
     Raises:
         None
     """
+    # test function(to detect icon)
     img = cv.imread("test.jpeg")
 
     img = cv.circle(img, (circle_x, circle_y), 12, (0, 0, 255), 1)
@@ -158,6 +161,7 @@ def draw_rectangle_on_champion(rectangle_x : int, rectangle_y : int) -> None:
     Raises:
         None
     """
+    # test function(to detect icon)
     img = cv.imread("test.jpeg")
 
     img = cv.rectangle(img, (rectangle_x, rectangle_y), (rectangle_x + 40, rectangle_y + 40), (0, 0, 255), 1)
@@ -197,6 +201,7 @@ def compare_champion_icon_with_champion_icon_data(champion_image_path : str, tes
     ]
     best_matched_index = []
 
+    # append list best matched champion icon
     for y_coordinate, x_coordinate in champions_icon_coordinate:
         matched_list = []
 
@@ -206,6 +211,7 @@ def compare_champion_icon_with_champion_icon_data(champion_image_path : str, tes
             img2 = cv.imread(test_image_path)
             src = img2[y_coordinate:y_coordinate+40, x_coordinate:x_coordinate+40]
 
+            # use sift algorithm
             sift = cv.xfeatures2d.SIFT_create()
             kp1, des1 = sift.detectAndCompute(img1, None)
             kp2, des2 = sift.detectAndCompute(src, None)
@@ -214,6 +220,7 @@ def compare_champion_icon_with_champion_icon_data(champion_image_path : str, tes
 
             match_list = []
 
+            # choose matched over 0.5 * distance
             for m, n in matches:
                 if m.distance < 0.5 * n.distance:
                     match_list.append([m])
@@ -228,9 +235,6 @@ def compare_champion_icon_with_champion_icon_data(champion_image_path : str, tes
 
 
 def get_champion_name() -> None:
-    # draw_circle_on_ultimate(1847, 165)
-    # draw_rectangle_on_champion(1847, 160)
-
     champion_icon_data = []
     champion_name = []
 
@@ -239,6 +243,7 @@ def get_champion_name() -> None:
 
     champion_icon_files = []
 
+    # image path
     champion_image_path = "../resources/champions_image/"
     test_video = "test4.mp4"
     get_image_from_video(test_video)

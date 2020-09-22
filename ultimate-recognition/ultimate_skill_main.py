@@ -113,11 +113,14 @@ def get_highlight_graph() -> None:
         Raises:
             None
     """
+    # load champion name, bool type list(is ultimate used)
     champion_name = fu.get_champion_name()
     is_ultimate_used = get_is_ultimate_used()
 
+    # make highlight list
     highlight_score_list = dh.get_highlight_list(champion_name, is_ultimate_used)
 
+    # draw highlight graph
     graph_x = range(len(is_ultimate_used))
     graph_y = highlight_score_list
 

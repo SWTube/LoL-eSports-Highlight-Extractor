@@ -19,6 +19,8 @@ def load_ultimate_cooltime_dictionary() -> dict:
             None
     """
     champion_cooltime_dictionary = {}
+
+    # load champion ultimate skill's cool down to dictionary
     with open("../resources/champion_ultimate_cooltime.txt") as champion_ultimate_cooltime:
         for line in champion_ultimate_cooltime:
             (key, value) = line.split()
@@ -37,7 +39,7 @@ def find_max_cooltime_value(champion_cooltime_dictionary : dict) -> int:
         Raises:
             None
     """
-    # champion_cooltime_dictionary = load_ultimate_cooltime_dictionary()
+    # find maximum ultimates cool down to get highlight
     max_value = max(champion_cooltime_dictionary.values())
 
     return max_value
@@ -55,6 +57,7 @@ def decision_highlight_score(champion_name : list, is_ultimate_used : list) -> f
         Raises:
             None
     """
+    # highlight score == skill cool down
     champion_cooltime_dictionary = load_ultimate_cooltime_dictionary()
 
     highlight_score = 0
@@ -78,7 +81,7 @@ def get_highlight_list(champion_name : list, is_ultimate_used : list) -> list:
         Raises:
             None
     """
-    # Add here!
+    # highlight(per second) = sum(skill cool down) / second
     highlight_list = []
 
     for sec in is_ultimate_used:
