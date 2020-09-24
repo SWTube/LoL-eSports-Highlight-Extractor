@@ -1,15 +1,11 @@
 """
-#   File Name: cognition_inGame.py
+#   File Name: cognition_pause.py
 #        Team: standardization
 #  Programmer: tjswodud
 #  Start Date: 07/07/20
 # Last Update: September 24, 2020
-#     Purpose: Determine the game is (Playing) or (not Playing) and cut Full_Video not in_game
-# Last Update: September 21, 2020
-#     Purpose: Full video of LCK will be given in this program.
-#              And compare frame and minimap image (template) per frame, using sift_algorithm.
-#              (if it success for compare, that frame is ingame, if not, that frame is not ingame.)
-#              Finally, this program will return edited video, except for frame that is not ingame.
+#     Purpose: This file will be used module of cognition_inGame.py.
+#              compare every frame and pause_image, and then cut the frame that has a pause_image.
 """
 
 import cv2 as cv
@@ -19,16 +15,16 @@ import numpy as np
 
 def sift_algorithm(frame_resize: np.ndarray, pause_image: np.ndarray) -> bool:
     """
-        Compare video's frame and template image, using sift_algorithm
+        Compare video's frame and pause image, using sift_algorithm
 
         Args:
             frame_resize: each of video's frame that is resized to template image
-            template: a template image (minimap image) to compare with video_capture
+            pause_image: a image (pause_image) to compare with video_capture
 
         Returns:
             [bool type]
-            if frame_resize and template match more than 15 points, return True (this frame is ingame.)
-            if not, return False (this frame is not ingame.)
+            if frame_resize and pause_image match more than 15 points, return False (this frame isn't ingame.)
+            if not, return True (this frame is ingame. -> match with template_image)
 
         Raises:
             N/A
