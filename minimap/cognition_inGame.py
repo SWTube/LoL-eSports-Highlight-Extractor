@@ -3,7 +3,7 @@
 #        Team: standardization
 #  Programmer: tjswodud
 #  Start Date: 07/07/20
-# Last Update: September 21, 2020
+# Last Update: September 24, 2020
 #     Purpose: Full video of LCK will be given in this program.
 #              And compare frame and minimap image (template) per frame, using sift_algorithm.
 #              (if it success for compare, that frame is ingame, if not, that frame is not ingame.)

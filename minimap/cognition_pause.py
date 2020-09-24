@@ -3,7 +3,7 @@
 #        Team: standardization
 #  Programmer: tjswodud
 #  Start Date: 07/07/20
-# Last Update: August 02, 2020
+# Last Update: September 24, 2020
 #     Purpose: Determine the game is (Playing) or (not Playing) and cut Full_Video not in_game
 # Last Update: September 21, 2020
 #     Purpose: Full video of LCK will be given in this program.
