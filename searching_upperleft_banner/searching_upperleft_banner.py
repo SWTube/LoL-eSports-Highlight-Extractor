@@ -1,18 +1,19 @@
+"""
 # File Name: searching_left_banner
 #      Team: standardization
 # Programmer: wpdudH
 # Start Date: 07/15/20
-#Last Update: September 7, 2020
+#Last Update: September 28, 2020
 #    Purpose: Raw video consists of in-game videos and replay videos.
 #             So we need to distinguish between in-game videos and replay videos.
 #             This program carries out that work.
+"""
 
 import cv2 as cv
 import numpy as np
-from matplotlib import pyplot as plt
-import os
+# from matplotlib import pyplot as plt
 
-def check_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> int:
+def check_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> bool:
     """
         Comparing video's capture to replay banner image to use sift algorithm
         Args:
@@ -26,7 +27,7 @@ def check_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> int:
     """
     sift = cv.xfeatures2d.SIFT_create()
 
-    frame_resize = cv.cvtColor(frame_resize, cv.COLOR_BGR2GRAY)
+    # frame_resize = cv.cvtColor(frame_resize, cv.COLOR_BGR2GRAY)
 
     keypoint_1, descriptor_1 = sift.detectAndCompute(frame_resize, None)
     keypoint_2, descriptor_2 = sift.detectAndCompute(compare_image, None)
@@ -39,15 +40,16 @@ def check_algorithm(frame_resize: np.ndarray, compare_image: np.ndarray) -> int:
         if m.distance < 0.75 * n.distance:
             good.append([m])
 
-    plt_image = cv.drawMatchesKnn(frame_resize, keypoint_1, compare_image, keypoint_2, good, None, flags=2)
-    plt.imshow(plt_image)
-    plt.show()
+    # plt_image = cv.drawMatchesKnn(frame_resize, keypoint_1, compare_image, keypoint_2, good, None, flags=2)
+    # plt.imshow(plt_image)
+    # plt.show()
 
     if len(good) > 30:
-        return 1
+        return False
     else:
-        return 0
+        return True
 
+'''
 def checklist_writer(compare_result:list) -> None:
     """
         Write check file consisting of results comparing video's capture to replay banner image
@@ -68,6 +70,7 @@ def checklist_writer(compare_result:list) -> None:
             text = classified[i]
             file.writelines(text+'\n')
     # Write csv file consisting of values of list named classified
+'''
 
 def frame_resize(frame: np.ndarray, image: int) -> np.ndarray:
     """
@@ -83,7 +86,7 @@ def frame_resize(frame: np.ndarray, image: int) -> np.ndarray:
         Raises:
             N/A
     """
-    height, width, channel = frame.shape
+    height, width = frame.shape
 
     if image == 0:
         start_height = round(45 / 1080 * height)
@@ -112,6 +115,7 @@ def frame_resize(frame: np.ndarray, image: int) -> np.ndarray:
 
     return frame_resize
 
+'''
 def store_video(video_name:str, video_path:str, compare_images: list ) -> None:
     """
         Storing in-game video
@@ -124,7 +128,7 @@ def store_video(video_name:str, video_path:str, compare_images: list ) -> None:
         Raises:
             N/A
     """
-    compare_result = []
+    # compare_result = []
     video_capture = cv.VideoCapture(video_path)
 
     total_frames = video_capture.get(cv.CAP_PROP_FRAME_COUNT)
@@ -152,7 +156,7 @@ def store_video(video_name:str, video_path:str, compare_images: list ) -> None:
         if video_capture.get(cv.CAP_PROP_POS_FRAMES) % int(fps) == 0:
             if check_algorithm(frame_resize(frame, 0), compare_images[0]) == 1 or check_algorithm(frame_resize(frame, 2), compare_images[2]) == 1:
                 # compare frame with replay_banner and pro view banner
-                compare_result.append('1')
+                # compare_result.append('1')
                 check = False
                 print("replay")
             else:
@@ -160,15 +164,15 @@ def store_video(video_name:str, video_path:str, compare_images: list ) -> None:
                     if check_algorithm(frame_resize(frame, 1), compare_images[1]) == 1 or check_algorithm(frame_resize(frame, 2), compare_images[2]) == 1:
                         # compare frame with highlight_banner and pro view banner
                         break
-                compare_result.append('0')
+                # compare_result.append('0')
                 check = True
                 print("ingame")
 
         if check == True:
             output_video.write(frame)
-            cv.imshow("output", frame)
+            # cv.imshow("output", frame)
 
-            if cv.waitKey(1) > 0: break
+            # if cv.waitKey(1) > 0: break
 
         if video_capture.get(cv.CAP_PROP_POS_FRAMES) == video_capture.get(cv.CAP_PROP_FRAME_COUNT):
             break
@@ -176,7 +180,8 @@ def store_video(video_name:str, video_path:str, compare_images: list ) -> None:
     video_capture.release()
     cv.destroyAllWindows()
 
-    checklist_writer(compare_result)
+    # checklist_writer(compare_result)
+    '''
 
 def resource(path:str) -> np.ndarray:
     """
@@ -188,9 +193,9 @@ def resource(path:str) -> np.ndarray:
         Raises:
             N/A
     """
-    return cv.imread(path,cv.IMREAD_GRAYSCALE)
+    return cv.imread(path, cv.IMREAD_GRAYSCALE)
 
-
+"""
 def main() -> None:
     replay_banner_path = "C:/Users/82102/PycharmProjects/LoL-eSports-Highlight-Extractor/resources/replay_banner.png"
     replay_banner = resource(replay_banner_path)
@@ -214,3 +219,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+    """

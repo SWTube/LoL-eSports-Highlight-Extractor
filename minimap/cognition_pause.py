@@ -3,7 +3,7 @@
 #        Team: standardization
 #  Programmer: tjswodud
 #  Start Date: 07/07/20
-# Last Update: September 24, 2020
+# Last Update: September 28, 2020
 #     Purpose: This file will be used module of cognition_inGame.py.
 #              compare every frame and pause_image, and then cut the frame that has a pause_image.
 """
