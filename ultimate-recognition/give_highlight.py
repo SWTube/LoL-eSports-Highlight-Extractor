@@ -115,7 +115,7 @@ def ultimate_use_frame(skill_data_vector: np.ndarray, threshold: int):
     :var
         skill_use_second: after initial frame(4 minute), interval is 1 second. so, it means 4 minute after second list
     :return
-        the
+        the skill use second after 4 minute,
     """
     skill_use_second=[]
     for frame_index in range(len(skill_data_vector)-1):
@@ -128,6 +128,28 @@ def ultimate_use_frame(skill_data_vector: np.ndarray, threshold: int):
                 continue
     return skill_use_second
 
+
+def error_check(paths:str, initial_frame:int, suspect_list:list):
+    """
+    last check error
+    :param paths:
+    :param initial_frame:
+    :param suspect_list:
+    :return:
+    """
+    standard_frame = froi.call_frame(paths, initial_frame)
+    cut_standard_frame = standard_frame[40:63, 880:900]
+    threshold = 1000
+    result_list = []
+    for each_frame in suspect_list:
+        compare = froi.call_frame(paths, each_frame)
+        cut_compare = compare[40:63, 880:900]
+        difference = analyze_difference(cut_standard_frame, cut_compare)
+        if abs(difference) > threshold:
+            pass
+        else:
+            result_list.append(each_frame)
+    return result_list
 
 
 if __name__ == '__main__':

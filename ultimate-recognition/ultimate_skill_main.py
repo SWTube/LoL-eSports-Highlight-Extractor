@@ -12,6 +12,8 @@ import decision_highlight as dh
 
 def get_is_ultimate_used() -> list:
     """
+        AVI for 1920 x 1080 version
+
         Can get bool type list is ultimate skill used
         Args:
 
@@ -21,16 +23,19 @@ def get_is_ultimate_used() -> list:
             None
     """
     # Configuration Variable
-    path ="test4.mp4"
+    path ="test5.mp4"
     initial_frame = 14400 # after 4 minute
 
 
     cap = cv.VideoCapture(path)
     interval_frame = int(cap.get(cv.CAP_PROP_FPS))+1
     total_frame = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
+    total_sec = int(total_frame / 60)
     analyze_frame = (total_frame - initial_frame) / interval_frame
+
+
+    assert analyze_frame >= 0, "initial frame is larger than total frame"
     threshold = math.sqrt(1/analyze_frame)
-    #threshold = 1 / (analyze_frame * analyze_frame)
 
 
     skill_similarity_matrix = gh.in_game_similarity(path, initial_frame, interval_frame)
@@ -84,6 +89,24 @@ def get_is_ultimate_used() -> list:
     right5_frame = gh.ultimate_use_frame(normal_right5, threshold)
 
 
+
+    print(
+        f"""
+        --- ultimate used second ---
+        -> after 4minute + this second
+        left1 : {left1_frame}
+        left2 : {left2_frame}
+        left3 : {left3_frame}
+        left4 : {left4_frame}
+        left5 : {left5_frame}
+        right1 : {right1_frame}
+        right2 : {right2_frame}
+        right3 : {right3_frame}
+        right4 : {right4_frame}
+        right5 : {right5_frame}
+        """)
+
+
     suspect_frame_left1 = pv.change_to_frame(initial_frame, interval_frame, left1_frame)
     suspect_frame_left2 = pv.change_to_frame(initial_frame, interval_frame, left2_frame)
     suspect_frame_left3 = pv.change_to_frame(initial_frame, interval_frame, left3_frame)
@@ -95,10 +118,37 @@ def get_is_ultimate_used() -> list:
     suspect_frame_right4 = pv.change_to_frame(initial_frame, interval_frame, right4_frame)
     suspect_frame_right5 = pv.change_to_frame(initial_frame, interval_frame, right5_frame)
 
-    frame_zip = [suspect_frame_left1, suspect_frame_left2, suspect_frame_left3, suspect_frame_left4, suspect_frame_left5,
-                  suspect_frame_right1, suspect_frame_right2, suspect_frame_right3, suspect_frame_right4, suspect_frame_right5]
+    result_frame_l1 = gh.error_check(path, initial_frame, suspect_frame_left1)
+    result_frame_l2 = gh.error_check(path, initial_frame, suspect_frame_left2)
+    result_frame_l3 = gh.error_check(path, initial_frame, suspect_frame_left3)
+    result_frame_l4 = gh.error_check(path, initial_frame, suspect_frame_left4)
+    result_frame_l5 = gh.error_check(path, initial_frame, suspect_frame_left5)
+    result_frame_r1 = gh.error_check(path, initial_frame, suspect_frame_right1)
+    result_frame_r2 = gh.error_check(path, initial_frame, suspect_frame_right2)
+    result_frame_r3 = gh.error_check(path, initial_frame, suspect_frame_right3)
+    result_frame_r4 = gh.error_check(path, initial_frame, suspect_frame_right4)
+    result_frame_r5 = gh.error_check(path, initial_frame, suspect_frame_right5)
 
-    bool_list = pv.frame_to_bool(total_frame, frame_zip)
+    print(
+        f"""
+        --- ultimate used frame ---
+        left1 : {result_frame_l1}
+        left2 : {result_frame_l2}
+        left3 : {result_frame_l3}
+        left4 : {result_frame_l4}
+        left5 : {result_frame_l5}
+        right1 : {result_frame_r1}
+        right2 : {result_frame_r2}
+        right3 : {result_frame_r3}
+        right4 : {result_frame_r4}
+        right5 : {result_frame_r5}
+        """)
+
+    frame_zip = [result_frame_l1, result_frame_l2, result_frame_l3, result_frame_l4, result_frame_l5,
+                  result_frame_r1, result_frame_r2, result_frame_r3, result_frame_r4, result_frame_r5]
+
+
+    bool_list = pv.frame2bool_per_sec(total_sec, frame_zip)
 
     return bool_list
 

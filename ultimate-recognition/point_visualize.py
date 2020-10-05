@@ -15,10 +15,6 @@ import cv2 as cv
 import time
 import math
 
-interval_frame = 60 # 1second
-initial_frame = 14400 # 4minute
-path = "raw3_cuted.mp4"
-
 
 def visualize(vector_1D: np.ndarray, name: str) -> None:
     """
@@ -44,6 +40,7 @@ def change_to_frame(suspect_list):
     return frame_converted_list
 
 
+
 def change_to_frame(initial_frame: int, interval_frame: int, suspect_minute: list) -> list:
     """
     :param after_4_minute:
@@ -56,13 +53,14 @@ def change_to_frame(initial_frame: int, interval_frame: int, suspect_minute: lis
     return frame_list
 
 
-def frame_to_bool(total_frame, zipped_frame_list: np.ndarray) -> np.ndarray:
+def frame2bool_per_sec(total_sec, zipped_frame_list: np.ndarray) -> np.ndarray:
     champion_number = 10
-    formats = np.full((total_frame, champion_number), False)
+    formats = np.full((total_sec, champion_number), False)
     champion_index = 0
     for suspect_list in zipped_frame_list:
         for frame_data in suspect_list:
-            formats[frame_data, champion_index] = True
+            second_data = int(frame_data/60)
+            formats[second_data, champion_index] = True
         champion_index += 1
     return formats
 
