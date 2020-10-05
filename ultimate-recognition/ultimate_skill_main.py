@@ -150,6 +150,7 @@ def get_is_ultimate_used() -> list:
 
     bool_list = pv.frame2bool_per_sec(total_sec, frame_zip)
 
+    bool_list = bool_list.tolist()
     return bool_list
 
 
