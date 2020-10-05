@@ -3,7 +3,7 @@
 #        Team: visual recognition 2
 #  Programmer: SW0000J
 #  Start Date: 08/08/20
-# Last Update: August 10, 2020
+# Last Update: October 05, 2020
 #     Purpose: to decision highlight score
 """
 
@@ -43,6 +43,25 @@ def find_max_cooltime_value(champion_cooltime_dictionary : dict) -> int:
     max_value = max(champion_cooltime_dictionary.values())
 
     return max_value
+
+
+def normalization(score_list : list) -> list:
+    """
+        Get normalized list
+        Args:
+            score_list : normalize object
+        Returns:
+            normalized list
+        Raises:
+            None
+    """
+    # max item value
+    max_value = float(max(score_list))
+
+    for i in range(len(score_list)):
+        score_list[i] /= max_value
+
+    return score_list
 
 
 def decision_highlight_score(champion_name : list, is_ultimate_used : list) -> float:
@@ -87,7 +106,9 @@ def get_highlight_list(champion_name : list, is_ultimate_used : list) -> list:
     for sec in is_ultimate_used:
         highlight_list.append(decision_highlight_score(champion_name, sec))
 
-    return highlight_list
+    return_list = normalization(highlight_list)
+
+    return return_list
 
 
 def main() -> None:
