@@ -61,8 +61,10 @@ def match_template(video_capture: np.ndarray, template: np.ndarray, pause_image:
 
         if video_capture.get(cv.CAP_PROP_POS_FRAMES) % int(fps) == 0:
             current_frame = int(video_capture.get(cv.CAP_PROP_POS_FRAMES))
-            percentage = int((current_frame / total_frames) * 100)
-            print('{}/{} - {}%'.format(current_frame, total_frames, percentage))
+            percentage = (current_frame / total_frames) * 100
+            # print('{}/{} - {}%'.format(current_frame, total_frames, percentage))
+            print(end='\r')
+            print('Processing... {}%\r'.format(round(percentage, 2)), end = '')
 
             sift_ans = sift_algorithm(frame_resize, template)
             pause_ans = pause.sift_algorithm(frame_resize_center, pause_image)
@@ -115,10 +117,10 @@ def sift_algorithm(frame_resize: np.ndarray, template: np.ndarray) -> bool:
     # plot.show()
 
     if len(success_match) > 15:
-        print('this frame is ingame.')
+        # print('this frame is ingame.')
         return True
     else:
-        print('this frame is not ingame.')
+        # print('this frame is not ingame.')
         return False
 
 def create_capture(path: str):

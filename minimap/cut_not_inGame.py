@@ -19,12 +19,13 @@ import time
 start_time = time.time()
 
 # in Windows OS
-# resource_path = "E:/video/resources"
-# output_path = "E:/video/outputs"
+resource_path = "E:/video/resources"
+output_path = "E:/video/outputs"
 
 # in Ubuntu OS
-resource_path = "/media/cogongnam/f8447e77-84e5-43a2-a0f0-e1b1977f1322/video/resources"
-output_path = "/media/cogongnam/f8447e77-84e5-43a2-a0f0-e1b1977f1322/video/outputs"
+# resource_path = "/media/cogongnam/f8447e77-84e5-43a2-a0f0-e1b1977f1322/video/resources"
+# output_path = "/media/cogongnam/f8447e77-84e5-43a2-a0f0-e1b1977f1322/video/outputs"
+
 replay_banner_path = "../resources/replay_banner.png"
 replay_banner = upperleft.resource(replay_banner_path)
 highlight_banner_path = "../resources/highlight.png"
