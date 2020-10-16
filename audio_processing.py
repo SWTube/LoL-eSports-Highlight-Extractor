@@ -4,7 +4,7 @@
 #   Programmer: J2onJaeHyeon
 #   Start: 08/03/20
 #   Last Update: August 30, 2020
-#   Purpose: Import audio file (format: wave)
+#   Purpose: Extracting highlights using volume (video format: wave)
 """
 
 
