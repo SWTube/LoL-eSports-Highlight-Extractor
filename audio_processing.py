@@ -3,7 +3,7 @@
 #       Team: audio_recognition
 #   Programmer: J2onJaeHyeon
 #   Start: 08/03/20
-#   Last Update: August 22, 2020
+#   Last Update: August 30, 2020
 #   Purpose: Import audio file (format: wave)
 """
 
@@ -13,16 +13,16 @@ import random
 
 def divide_section(sound : AudioSegment) -> dict:
     """
-    value 값이 중복되면 앞서 입력된 key가 사라지는 것을 방지하기 위해 1000 곱하고 세자리 수 난수를 더해줌
-    어짜피 크기 줄 세우는 건 변하지 않으니
+        Divide section every second and measure high amplitude of audio section
+
     """
-    section_sec = 1000  # 1 section = 3 sec
+    section_sec = 1000  # 1 section = 1 sec
     number_of_section = int(len(sound) / section_sec)
     amplitude_dict = {}
     for index in range(number_of_section) :
-        section = sound[section_sec * index : section_sec * (index + 1)]
+        section = sound[section_sec * (index) : section_sec * (index + 1)]
         high_amplitude = section.max
-        high_amplitude = high_amplitude * 1000 + random.randrange(1,1000)
+        high_amplitude = high_amplitude * 1000 + random.randrange(1,1000) # value 값이 중복되면 삭제되기 때문에 세자릿수 난수를 넣어줌
         amplitude_dict[index] = high_amplitude
 
         if ((index + 1) == number_of_section):
@@ -33,13 +33,9 @@ def divide_section(sound : AudioSegment) -> dict:
 
     return amplitude_dict
 
-def descending_amps(amp_dict : dict) -> list:
-    amps_list = list(amp_dict.values())
-    amps_list.sort(reverse = True)
-
 def score_amps(amp_dict : dict) -> dict:
     amps_list = list(amp_dict.values())
-    amps_list.sort(reverse=True)
+    amps_list.sort(reverse = True)
     top_sound = amps_list[0]
 
     for index in range (len(amp_dict)) :
@@ -80,11 +76,12 @@ def filter_amps(amp_dict : dict) -> dict :
     time_list = list(amp_dict.keys())
 
     # 5초 안에 연결되지 않은 하이라이트 시점이 있다면 연결함
-    for k in range(10) :
-        for index in range(1, len(amp_dict)):
-            if ((time_list[index] - time_list[index - 1]) <= 5):
-                for num in range(1, time_list[index] - time_list[index - 1]):
-                    time_list.append(time_list[index - 1] + num)
+
+    for index in range(1, len(amp_dict)):
+        if ((time_list[index] - time_list[index - 1]) <= 5):
+            for num in range(1, time_list[index] - time_list[index - 1]):
+                time_list.append(time_list[index - 1] + num)
+
     # 중복성 제거
     temp_list = []
     for time in time_list :
@@ -112,79 +109,42 @@ def filter_amps(amp_dict : dict) -> dict :
         else :
             continue
     time_table = empty_list
-    print(time_table)
-    return time_list
+    
+    return time_table
+    # 이 과정 이후 time_table에는 list in list 방식으로 구간마다 list로 짜여짐
 
+def expend_timelist(time_table : list) -> None : #전후과정을 알 수 있게 앞뒤 2초씩 넣어줌
+    empty_list = []
+    for time_list in time_table :
+        start_num = time_list[0]
+        end_num = time_list[-1]
+        if (start_num >= 2) :
+            temp_list = [start_num - 2, start_num - 1, end_num + 1, end_num + 2]
+            time_list.extend(temp_list)
+            time_list.sort()
 
+def verify_algorithm(time_table : list, amp_dict : dict) -> None : #현재로는 노 쓸모
+    temp_list =[]
+    for time in time_table :
+        for item in time:
+            temp_list.append(item)
+    empty_list = []
+    for index in temp_list:
+        empty_list.append(amp_dict[index])
+    print(empty_list)
 
-def print_dict(amp_dict: dict) -> None:
-    print(amp_dict.items())
-
-
-def print_list(amplitude_list : list) -> None:
-    '''
-    :param amplitude_list: just print list yeah
-    :return: None
-    '''
-    print("len(list) : ", len(amplitude_list))
-    num = 0
-    for index in range(len(amplitude_list)):
-        if(amplitude_list[index] > 50):
-            num = num + 1
-            print(amplitude_list[index])
-    print("num : ", num)
-
-"""
-def divide_section(sound : AudioSegment) -> list:
-    section_sec = 3000  # 1 section = 3 sec
-    number_of_section = int(len(sound) / section_sec)
-    amplitude_list = []
-    for index in range(number_of_section) :
-        section = sound[section_sec * index : section_sec * (index + 1)]
-        high_amplitude = section.max
-        amplitude_list.append(high_amplitude)
-
-        if ((index + 1) == number_of_section):
-            high_amplitude = sound[section_sec * (index + 1):].max
-            amplitude_list.append(high_amplitude)
-        else :
-            continue
-
-    return amplitude_list
-
-
-
-def print_list(amplitude_list : list) -> None:
-    '''
-    :param amplitude_list: just print list yeah
-    :return: None
-    '''
-    print("len(list) : ", len(amplitude_list))
-    for index in range(len(amplitude_list)):
-        print(amplitude_list[index])
-"""
 def main():
-    sound = AudioSegment.from_file("T1 vs SANDBOX Game 2 - LCK 2020 Spring Split W4D3 - SK Telecom T1 vs SBG G2.wav", format="wave")
+    sound = AudioSegment.from_file("T1 vs SANDBOX Game 2 - LCK 2020 Spring Split W4D3 - SK Telecom T1 vs SBG G2.wav", format = "wave")
     amps_dict = divide_section(sound)
     amps_dict = score_amps(amps_dict)
-    #amps_list = list(amps_dict.values())
-    #amps_list.sort(reverse = True)
-    time_list = filter_amps(amps_dict)
-    #print_list(amps_list)
-    print(len(amps_dict), amps_dict)
-    print(len(time_list), time_list)
+    time_table = filter_amps(amps_dict)
+    expend_timelist(time_table)
+    print(time_table)
 
+    # 처음 숫자랑 마지막 숫자만 반환회도 괜찮을거라는 의견
     return None
 
 if __name__ == '__main__':
     main()
 
-"""   
-    peak_amplitude = sound.max
-    print(peak_amplitude)
-
-new_wave = sound[0:26709]
-print(new_wave.max)
-print(len(sound))
-"""
 
