@@ -2,6 +2,7 @@ import csv
 
 
 def extract_num_of_chats_in_5sec(filename) -> list: # 5초안에 50개 이상의 채팅이 입력되면 하이라이트로 처리
+    
     chat_file = open('{}_comments.csv'.format(filename), 'r', encoding='UTF-8')
 
     #extract chating time from chat_file
@@ -43,6 +44,7 @@ def extract_num_of_chats_in_5sec(filename) -> list: # 5초안에 50개 이상의
 def extract_time_of_100chat(filename) -> list: #100개의 채팅이 10초안에 입력되면 하이라이트로 처리
 
     chat_file = open('{}_comments.csv'.format(filename), 'r', encoding='UTF-8')
+    
     #extract chating time from chat_file
     df_lol_chat = csv.reader(chat_file)
     df_time_column = []
