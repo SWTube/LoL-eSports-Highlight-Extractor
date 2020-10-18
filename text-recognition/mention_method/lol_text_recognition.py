@@ -4,16 +4,14 @@ import csv
 def extract_num_of_chats_in_5sec(filename) -> list: # 5초안에 50개 이상의 채팅이 입력되면 하이라이트로 처리
     chat_file = open('{}_comments.csv'.format(filename), 'r', encoding='UTF-8')
 
+    #extract chating time from chat_file
     df_lol_chat = csv.reader(chat_file)
     df_time_column = []
-    df_chat_column = []
 
     for line in df_lol_chat:
         df_time_column.append(line[0])
-        df_chat_column.append(line[2])
 
     del df_time_column[0]
-    del df_chat_column[0]
 
     chat_file.close()
 
@@ -45,17 +43,14 @@ def extract_num_of_chats_in_5sec(filename) -> list: # 5초안에 50개 이상의
 def extract_time_of_100chat(filename) -> list: #100개의 채팅이 10초안에 입력되면 하이라이트로 처리
 
     chat_file = open('{}_comments.csv'.format(filename), 'r', encoding='UTF-8')
-
+    #extract chating time from chat_file
     df_lol_chat = csv.reader(chat_file)
     df_time_column = []
-    df_chat_column = []
 
     for line in df_lol_chat:
         df_time_column.append(line[0])
-        df_chat_column.append(line[2])
 
     del df_time_column[0]
-    del df_chat_column[0]
 
     chat_file.close()
 
@@ -116,10 +111,10 @@ def extract_highlight_section(highlight_list,frame_num): #input is highlight lis
         except:
             break
 
-def main(filename,frame_num): #input is filename and frame_num you want.
-
+def main(filename): #input is filename and frame_num you want.
+    frame_num = int(input("please enter 30 or 60 or sec: "))
     highlight_list = add_highlight_time_list(filename)
 
     extract_highlight_section(highlight_list,frame_num)
 
-main(666718347,60)
+main(666718347)
