@@ -1,4 +1,5 @@
 """
+
 #   File Name: visualization.py
 #        Team: visual recognition 2
 #  Programmer: littlecsi
@@ -7,6 +8,7 @@
 # Last Update: July 29, 2020
 #     Purpose: Imports image comparison functions from lol_spell_recognition.py file and evaulautes them.
                Evaluation results are saved in 'result' directory.
+
 """
 import lol_spell_recognition as lsr
 
