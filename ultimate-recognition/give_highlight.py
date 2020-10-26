@@ -3,7 +3,7 @@
 #        Team: visual recognition 2
 #  Programmer: luckydipper
 #  Start Date: 08/08/20
-# Last Update: September 21, 2020
+# Last Update: October 26, 2020
 #     Purpose: to decide whether frame's skill is used or not
 """
 
@@ -79,7 +79,8 @@ def in_game_similarity(path: str, initial: int, interval: int) -> np.ndarray:
     frame_number = 0
     cap = cv.VideoCapture(path)
     while cap.get(cv.CAP_PROP_FRAME_COUNT)-interval > initial+frame_number*interval:
-        print((initial+frame_number*interval)/(cap.get(cv.CAP_PROP_FRAME_COUNT)-interval)*100, "% completed.")
+        completed_rate = (initial+frame_number*interval)/(cap.get(cv.CAP_PROP_FRAME_COUNT)-interval)*100
+        print(round(completed_rate, 3), "% completed.")
         frame_number += 1
         compare_frame = froi.call_frame(path, initial+frame_number*interval)
         compare_skill_list = froi.cut_image(compare_frame)
@@ -129,13 +130,13 @@ def ultimate_use_frame(skill_data_vector: np.ndarray, threshold: int):
     return skill_use_second
 
 
-def error_check(paths:str, initial_frame:int, suspect_list:list):
+def error_check(paths: str, initial_frame: int, suspect_list: list):
     """
-    last check error
-    :param paths:
-    :param initial_frame:
+    last check error,
+    :param paths: directory of video
+    :param initial_frame: standard, skill off, image frame
     :param suspect_list:
-    :return:
+    :return: result list
     """
     standard_frame = froi.call_frame(paths, initial_frame)
     cut_standard_frame = standard_frame[40:63, 880:900]
@@ -152,10 +153,44 @@ def error_check(paths:str, initial_frame:int, suspect_list:list):
     return result_list
 
 
+def change_to_frame(initial_frame: int, interval_frame: int, suspect_minute: list) -> list:
+    """
+    :param after_4_minute:
+    :return:
+    """
+    frame_list = []
+    for second in suspect_minute:
+        frame_number = initial_frame + second * interval_frame
+        frame_list.append(frame_number)
+    return frame_list
+
+
+def frame2bool_per_sec(total_sec, zipped_frame_list: np.ndarray) -> np.ndarray:
+    champion_number = 10
+    formats = np.full((total_sec, champion_number), False)
+    champion_index = 0
+    for suspect_list in zipped_frame_list:
+        for frame_data in suspect_list:
+            second_data = int(frame_data/60)
+            formats[second_data, champion_index] = True
+        champion_index += 1
+    return formats
+
+
+def main(path_test: str = "test2.mp4", start_frame_test: int = 14400, compare_frame: int = 20000) -> None:
+    """
+    Compare two image, and print difference of two image
+    :param path_test: The path of Video
+    :param start_frame_test: by this frame, get 'skill off images' these images are standard
+    :param compare_frame: compare with start frame image
+    :raise: standard image pop up
+    :return: None
+    """
+    compare_frame_image = froi.call_frame_test(path_test, compare_frame)
+    compare_skill_list = froi.cut_image_test(compare_frame_image)
+    print(f"the difference between standard image frame : {start_frame_test}'th skill image and {compare_frame}'th skill image is")
+    print(make_difference_list(path=path_test, initial_frame=start_frame_test, compare_list=compare_skill_list))
+
+
 if __name__ == '__main__':
-    path = "raw3_cuted.mp4"
-    start_frame = 14400
-    standard_skill_list_test = froi.cut_image_test(start_frame)
-    compare_frame = froi.call_frame(path, 40000)
-    compare_skill_list = froi.cut_image_test(compare_frame)
-    print(make_difference_list(compare_skill_list))
+    main(path_test="test2.mp4")

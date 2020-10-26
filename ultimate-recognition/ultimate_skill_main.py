@@ -1,20 +1,18 @@
-import find_region_of_interest as froi
 import give_highlight as gh
 import cv2 as cv
-import numpy as np
 import matplotlib.pyplot as plt
 import math
-import time
 import point_visualize as pv
 import finding_ultimate as fu
 import decision_highlight as dh
 
 
-def get_is_ultimate_used() -> list:
+def get_is_ultimate_used(path: str = "test5.mp4", initial_frame: int = 14400) -> list:
     """
         AVI for 1920 x 1080 version
 
         Can get bool type list is ultimate skill used
+        :param initial_frame: frame unit, start frame 14400 means after 4minute
         Args:
 
         Returns:
@@ -22,10 +20,6 @@ def get_is_ultimate_used() -> list:
         Raises:
             None
     """
-    # Configuration Variable
-    path ="test4.mp4"
-    initial_frame = 14400 # after 4 minute
-
 
     cap = cv.VideoCapture(path)
     interval_frame = int(cap.get(cv.CAP_PROP_FPS))+1
@@ -64,17 +58,17 @@ def get_is_ultimate_used() -> list:
     normal_right4 = gh.normalize(right4)
     normal_right5 = gh.normalize(right5)
 
-
-    pv.visualize(normal_left1, "left1")
-    pv.visualize(normal_left2, "left2")
-    pv.visualize(normal_left3, "left3")
-    pv.visualize(normal_left4, "left4")
-    pv.visualize(normal_left5, "left5")
-    pv.visualize(normal_right1, "right1")
-    pv.visualize(normal_right2, "right2")
-    pv.visualize(normal_right3, "right3")
-    pv.visualize(normal_right4, "right4")
-    pv.visualize(normal_right5, "right5")
+    # this function draw graph
+    # pv.visualize(normal_left1, "left1")
+    # pv.visualize(normal_left2, "left2")
+    # pv.visualize(normal_left3, "left3")
+    # pv.visualize(normal_left4, "left4")
+    # pv.visualize(normal_left5, "left5")
+    # pv.visualize(normal_right1, "right1")
+    # pv.visualize(normal_right2, "right2")
+    # pv.visualize(normal_right3, "right3")
+    # pv.visualize(normal_right4, "right4")
+    # pv.visualize(normal_right5, "right5")
 
 
     left1_frame = gh.ultimate_use_frame(normal_left1, threshold)
@@ -107,16 +101,16 @@ def get_is_ultimate_used() -> list:
         """)
 
 
-    suspect_frame_left1 = pv.change_to_frame(initial_frame, interval_frame, left1_frame)
-    suspect_frame_left2 = pv.change_to_frame(initial_frame, interval_frame, left2_frame)
-    suspect_frame_left3 = pv.change_to_frame(initial_frame, interval_frame, left3_frame)
-    suspect_frame_left4 = pv.change_to_frame(initial_frame, interval_frame, left4_frame)
-    suspect_frame_left5 = pv.change_to_frame(initial_frame, interval_frame, left5_frame)
-    suspect_frame_right1 = pv.change_to_frame(initial_frame, interval_frame, right1_frame)
-    suspect_frame_right2 = pv.change_to_frame(initial_frame, interval_frame, right2_frame)
-    suspect_frame_right3 = pv.change_to_frame(initial_frame, interval_frame, right3_frame)
-    suspect_frame_right4 = pv.change_to_frame(initial_frame, interval_frame, right4_frame)
-    suspect_frame_right5 = pv.change_to_frame(initial_frame, interval_frame, right5_frame)
+    suspect_frame_left1 = gh.change_to_frame(initial_frame, interval_frame, left1_frame)
+    suspect_frame_left2 = gh.change_to_frame(initial_frame, interval_frame, left2_frame)
+    suspect_frame_left3 = gh.change_to_frame(initial_frame, interval_frame, left3_frame)
+    suspect_frame_left4 = gh.change_to_frame(initial_frame, interval_frame, left4_frame)
+    suspect_frame_left5 = gh.change_to_frame(initial_frame, interval_frame, left5_frame)
+    suspect_frame_right1 = gh.change_to_frame(initial_frame, interval_frame, right1_frame)
+    suspect_frame_right2 = gh.change_to_frame(initial_frame, interval_frame, right2_frame)
+    suspect_frame_right3 = gh.change_to_frame(initial_frame, interval_frame, right3_frame)
+    suspect_frame_right4 = gh.change_to_frame(initial_frame, interval_frame, right4_frame)
+    suspect_frame_right5 = gh.change_to_frame(initial_frame, interval_frame, right5_frame)
 
     result_frame_l1 = gh.error_check(path, initial_frame, suspect_frame_left1)
     result_frame_l2 = gh.error_check(path, initial_frame, suspect_frame_left2)
@@ -148,7 +142,7 @@ def get_is_ultimate_used() -> list:
                   result_frame_r1, result_frame_r2, result_frame_r3, result_frame_r4, result_frame_r5]
 
 
-    bool_list = pv.frame2bool_per_sec(total_sec, frame_zip)
+    bool_list = gh.frame2bool_per_sec(total_sec, frame_zip)
 
     bool_list = bool_list.tolist()
     return bool_list

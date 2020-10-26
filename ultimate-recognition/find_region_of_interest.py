@@ -3,7 +3,7 @@
 #        Team: visual recognition 2
 #  Programmer: luckydipper
 #  Start Date: 08/08/20
-# Last Update: September 21, 2020
+# Last Update: October 26, 2020
 #     Purpose: to find region of interest.
 """
 import cv2 as cv
@@ -55,7 +55,7 @@ def call_frame_test(path: str, frame_number: int):
     frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     convert_window_freestyle("frame")
     cv.imshow('frame', frame)
-    key = cv.waitKey(0)
+    key = cv.waitKey(500)
     if key == 27:
         cap.release()
     cv.destroyAllWindows()
@@ -104,12 +104,24 @@ def cut_image_test(image: np.ndarray) -> list:
     for index in range(len(result) - 1):
         convert_window_freestyle(f"image{index}")
         cv.imshow(f"image{index}", result[index])
-    cv.waitKey()
+    cv.waitKey(500)
     cv.destroyAllWindows()
     return result
 
 
-if __name__ == '__main__':
-    path = "raw3_cuted.mp4"
-    first_frame = call_frame_test(path,14000)
+def main(path: str = "raw3_cut.mp4", frame_number: int = 14000) -> None:
+    """
+    Show show image of ultimate skill at that frame
+    :param path: directory of video
+    :param frame_number: show this frame's image
+    :raise: show image of ultimate skill
+    :return: None
+    """
+    first_frame = call_frame_test(path, frame_number)
     cut_image_test(first_frame)
+
+
+if __name__ == '__main__':
+    main(path="test2.mp4")
+
+
