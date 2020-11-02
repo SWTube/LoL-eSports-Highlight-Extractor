@@ -85,6 +85,5 @@ def get_list(csv_filename):
 
     print(resulting_list)
     print("---------------")
+    return resulting_list
     chat_file.close()
-
-get_list("666718347_comments.csv")
