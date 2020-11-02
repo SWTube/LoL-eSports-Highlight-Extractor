@@ -94,7 +94,12 @@ class Game:
     def get_highlights(self) -> list:
         offset = 1
         highlights = []
+        last_sec = 0
+
         for sec in range(0, len(self.blue_team_mention_count)):
+            if sec < last_sec:
+                continue
+
             inclines = []
             t = 0
             while True:
@@ -106,10 +111,18 @@ class Game:
                         inclines.append(incline)
                         continue
 
-                    elif incline < inclines[-1]:
-                        if t > 90:
-                            highlights.append((sec, sec + t + offset))
+                    if incline < 0:
                         break
+
+                    if incline < inclines[-1] and t > 30:
+                        highlights.append((sec, sec + t + offset))
+                        last_sec = sec + t
+                        break
+
+                    elif incline < inclines[-1]:
+                        break
+
+                    inclines.append(incline)
 
                 except IndexError:
                     break
