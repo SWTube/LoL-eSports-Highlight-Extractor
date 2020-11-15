@@ -46,7 +46,7 @@ def find_highlight_clip(word, chat_db, times_list):
             count = 0
             index_count = 0
             while (times_list[chtidx + count] - times_list[chtidx]) <= 5:
-                if chat_db[chtidx + count].find(word) != -1:
+                if chat_db[chtidx + count].find(word) != False:
                     index_count += 1
 
                 if index_count > 9:
