@@ -218,12 +218,12 @@ def save_result_as_csv(similarity: list, spell_names: list) -> None:
         with open(path, 'w', newline='') as file:
             check_row = []
             for idx2 in range(len(similarity[idx]) - 1):
-                if((similarity[idx][idx2 + 1] - similarity[idx][idx2]) / similarity[idx][idx2] * 100) < -50:
+                if((similarity[idx][idx2 + 1] - similarity[idx][idx2]) / similarity[idx][idx2] * 100) < -30:
                     similarity_error = True
                     # Checking similarity while 10s
                     if(idx2 + 10 < len(similarity[idx]) - 1):
                         for idx3 in range(idx2, idx2 + 10):
-                            if ((similarity[idx][idx3 + 1] - similarity[idx][idx2]) / similarity[idx][idx2] * 100) > -50:
+                            if ((similarity[idx][idx3 + 1] - similarity[idx][idx2]) / similarity[idx][idx2] * 100) > -30:
                                 similarity_error = False
                     if similarity_error:
                         # If left side was hidden, erase it
