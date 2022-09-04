@@ -9,6 +9,7 @@ Based on conda environment
 * OpenCV 3.4.2
 * numpy 1.18.1
 * matplotlib 3.1.3
+* Pydub 0.24.1
 
 # Organization
 ## Visual Recognition
