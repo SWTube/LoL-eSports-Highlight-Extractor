@@ -24,7 +24,7 @@ Based on conda environment
 
 ## Audio Recognition
 * **[AmorAmare](https://github.com/AmorAmare) Leader**
-* [J2onJaeHyeon](https://github.com/J2onJaeHyeon)
+* [J2on](https://github.com/J2on)
 * [eu2525](https://github.com/eu2525)
 * [H-Software224](https://github.com/H-Software224)
 
