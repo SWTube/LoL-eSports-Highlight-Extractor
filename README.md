@@ -24,7 +24,7 @@ Based on conda environment
 * [kkim99](https://github.com/kkim99)
 
 ## Audio Recognition
-* **[AmorAmare](https://github.com/AmorAmare) Leader**
+* **[JinnnK](https://github.com/JinnnK) Leader**
 * [J2on](https://github.com/J2on)
 * [eu2525](https://github.com/eu2525)
 * [H-Software224](https://github.com/H-Software224)
